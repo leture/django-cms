@@ -12,11 +12,17 @@ def is_valid_page_slug(page, parent, lang, slug, site, path=None):
     """
     from cms.models import Title
     # Exclude the page with the publisher_state == page.PUBLISHER_STATE_DELETE
-    qs = Title.objects.filter(page__site=site).exclude(
-        Q(page=page) |
-        Q(page=page.publisher_public) |
-        Q(page__publisher_state=page.PUBLISHER_STATE_DELETE)
-    )
+    if page.pk:
+        qs = Title.objects.filter(page__site=site).exclude(
+            Q(page=page) |
+            Q(page=page.publisher_public) |
+            Q(page__publisher_state=page.PUBLISHER_STATE_DELETE)
+        )
+    else:
+        qs = Title.objects.filter(page__site=site).exclude(
+            Q(page=page.publisher_public) |
+            Q(page__publisher_state=page.PUBLISHER_STATE_DELETE)
+        )
 
     if settings.i18n_installed:
         qs = qs.filter(language=lang)
@@ -33,12 +39,15 @@ def is_valid_page_slug(page, parent, lang, slug, site, path=None):
 
     if page.pk:
         qs = qs.exclude(language=lang, page=page)
+
     ## Check for slugs
     if qs.filter(slug=slug).count():
         return False
+
     ## Check for path
     if path and qs.filter(path=path).count():
         return False
+
     return True
 
 def get_available_slug(title, new_slug=None):
