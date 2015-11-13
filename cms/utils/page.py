@@ -11,11 +11,17 @@ def is_valid_page_slug(page, parent, lang, slug, site, path=None):
     """
     from cms.models import Title
     # Exclude the page with the publisher_state == page.PUBLISHER_STATE_DELETE
-    qs = Title.objects.filter(page__site=site).exclude(
-        Q(page=page) |
-        Q(page=page.publisher_public) |
-        Q(page__publisher_state=page.PUBLISHER_STATE_DELETE)
-    )
+    if page.pk:
+        qs = Title.objects.filter(page__site=site).exclude(
+            Q(page=page) |
+            Q(page=page.publisher_public) |
+            Q(page__publisher_state=page.PUBLISHER_STATE_DELETE)
+        )
+    else:
+        qs = Title.objects.filter(page__site=site).exclude(
+            Q(page=page.publisher_public) |
+            Q(page__publisher_state=page.PUBLISHER_STATE_DELETE)
+        )
 
     if settings.USE_I18N:
         qs = qs.filter(language=lang)
