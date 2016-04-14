@@ -175,12 +175,13 @@ class PageAdmin(ModelAdmin):
                 'css/jquery.dialog.css',
             )]
         }
-        js = ['%sjs/jquery.min.js' % admin_static_url()] + [cms_static_url(path) for path in [
-            'js/plugins/admincompat.js',
-            'js/libs/jquery.query.js',
-            'js/libs/jquery.ui.core.js',
-            'js/libs/jquery.ui.dialog.js',
-        ]
+        js = ['{}js/jquery{}.js'.format(admin_static_url(), '' if settings.DEBUG else '.min')] + [
+            cms_static_url(path) for path in [
+                'js/plugins/admincompat.js',
+                'js/libs/jquery.query.js',
+                'js/libs/jquery.ui.core.js',
+                'js/libs/jquery.ui.dialog.js',
+            ]
         ]
 
 
