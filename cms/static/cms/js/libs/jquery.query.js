@@ -16,7 +16,7 @@ new function(settings) {
   var $prefix = settings.prefix === false ? false : true;
   var $hash = $prefix ? settings.hash === true ? "#" : "?" : "";
   
-  jQuery.query = new function() {
+  django.jQuery.query = new function() {
     var is = function(o, t) {
       return o != undefined && o !== null && (!!t ? o.constructor == t : true);
     };
@@ -66,17 +66,17 @@ new function(settings) {
       self.keys = {};
       
       if (a.queryObject) {
-        jQuery.each(a.get(), function(key, val) {
+        django.jQuery.each(a.get(), function(key, val) {
           self.SET(key, val);
         });
       } else {
-        jQuery.each(arguments, function() {
+        django.jQuery.each(arguments, function() {
           var q = "" + this;
           q = q.replace(/^[?#]/,''); // remove any leading ? || #
           q = q.replace(/[;&]$/,''); // remove any trailing & || ;
           if ($spaces) q = q.replace(/[+]/g,' '); // replace +'s with spaces
           
-          jQuery.each(q.split(/[&;]/), function(){
+          django.jQuery.each(q.split(/[&;]/), function(){
             var key = this.split('=')[0];
             var val = this.split('=')[1];
             
@@ -117,7 +117,7 @@ new function(settings) {
       get: function(key) {
         var target = this.GET(key);
         if (is(target, Object))
-          return jQuery.extend(true, {}, target);
+          return django.jQuery.extend(true, {}, target);
         else if (is(target, Array))
           return target.slice(0);
         return target;
@@ -140,7 +140,7 @@ new function(settings) {
       },
       EMPTY: function() {
         var self = this;
-        jQuery.each(self.keys, function(key, value) {
+        django.jQuery.each(self.keys, function(key, value) {
           delete self.keys[key];
         });
         return self;
@@ -161,7 +161,7 @@ new function(settings) {
               else
                 o[key] = value;
             }
-            jQuery.each(orig, function(key, value) {
+            django.jQuery.each(orig, function(key, value) {
               if (!is(value)) return true;
               add(obj, key, build(value));
             });
@@ -189,7 +189,7 @@ new function(settings) {
           var newKey = function(key) {
             return !base || base == "" ? [key].join("") : [base, "[", key, "]"].join("");
           };
-          jQuery.each(obj, function(key, value) {
+          django.jQuery.each(obj, function(key, value) {
             if (typeof value == 'object') 
               build(value, newKey(key));
             else
@@ -208,4 +208,4 @@ new function(settings) {
     
     return new queryObject(location.search, location.hash);
   };
-}(jQuery.query || {}); // Pass in jQuery.query as settings object
+}(django.jQuery.query || {}); // Pass in jQuery.query as settings object

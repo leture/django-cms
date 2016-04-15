@@ -31,4 +31,4 @@
 		delete $.__callbackPool[name];
 	}
 	
-})(jQuery);
+})(django.jQuery);

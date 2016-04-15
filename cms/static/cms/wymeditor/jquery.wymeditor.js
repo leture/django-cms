@@ -55,7 +55,7 @@ if (typeof (WYMeditor) === 'undefined') {
     }
 }());
 
-jQuery.extend(WYMeditor, {
+django.jQuery.extend(WYMeditor, {
 
 /**
     Constants
@@ -290,7 +290,7 @@ jQuery.extend(WYMeditor, {
         this._element = elem;
         this._options = options;
         // Store the element's inner value
-        this._html = jQuery(elem).val();
+        this._html = django.jQuery(elem).val();
 
         if (this._options.html) {
             this._html = this._options.html;
@@ -334,9 +334,9 @@ jQuery.extend(WYMeditor, {
 
     `jQuery(".wymeditor").wymeditor({});`
 */
-jQuery.fn.wymeditor = function (options) {
+django.jQuery.fn.wymeditor = function (options) {
 
-    options = jQuery.extend({
+    options = django.jQuery.extend({
 
         html:       "",
         basePath:   false,
@@ -687,12 +687,12 @@ jQuery.fn.wymeditor = function (options) {
         // Assigning to _editor because the return value from new isn't
         // actually used, but we need to use new to properly change the
         // prototype
-        var _editor = new WYMeditor.editor(jQuery(this), options);
+        var _editor = new WYMeditor.editor(django.jQuery(this), options);
     });
 };
 
 // Enable accessing of wymeditor instances via $.wymeditors
-jQuery.extend({
+django.jQuery.extend({
     wymeditors: function (i) {
         return WYMeditor.INSTANCES[i];
     }
@@ -714,9 +714,9 @@ jQuery.extend({
     * /core.js
 */
 WYMeditor.computeWymPath = function () {
-    var script = jQuery(
-        jQuery.grep(
-            jQuery('script'),
+    var script = django.jQuery(
+        django.jQuery.grep(
+            django.jQuery('script'),
             function (s) {
                 if (!s.src) {
                     return null;
@@ -775,9 +775,9 @@ WYMeditor.computeBasePath = function (wymPath) {
     * Plus the jquery-<version> variants
 */
 WYMeditor.computeJqueryPath = function () {
-    return jQuery(
-        jQuery.grep(
-            jQuery('script'),
+    return django.jQuery(
+        django.jQuery.grep(
+            django.jQuery('script'),
             function (s) {
                 return (
                     s.src &&
@@ -797,7 +797,7 @@ WYMeditor.INIT_DIALOG = function (index) {
     var wym = window.opener.WYMeditor.INSTANCES[index],
         doc = window.document,
         selected = wym.selected(),
-        dialogType = jQuery(wym._options.dialogTypeSelector).val(),
+        dialogType = django.jQuery(wym._options.dialogTypeSelector).val(),
         sStamp = wym.uniqueStamp(),
         styles,
         aCss,
@@ -807,17 +807,17 @@ WYMeditor.INIT_DIALOG = function (index) {
         // ensure that we select the link to populate the fields
         if (selected && selected.tagName &&
                 selected.tagName.toLowerCase !== WYMeditor.A) {
-            selected = jQuery(selected).parentsOrSelf(WYMeditor.A);
+            selected = django.jQuery(selected).parentsOrSelf(WYMeditor.A);
         }
 
         // fix MSIE selection if link image has been clicked
         if (!selected && wym._selected_image) {
-            selected = jQuery(wym._selected_image).parentsOrSelf(WYMeditor.A);
+            selected = django.jQuery(wym._selected_image).parentsOrSelf(WYMeditor.A);
         }
     }
 
     // pre-init functions
-    if (jQuery.isFunction(wym._options.preInitDialog)) {
+    if (django.jQuery.isFunction(wym._options.preInitDialog)) {
         wym._options.preInitDialog(wym, window);
     }
 
@@ -829,24 +829,24 @@ WYMeditor.INIT_DIALOG = function (index) {
 
     // auto populate fields if selected container (e.g. A)
     if (selected) {
-        jQuery(wym._options.hrefSelector).val(jQuery(selected).attr(WYMeditor.HREF));
-        jQuery(wym._options.srcSelector).val(jQuery(selected).attr(WYMeditor.SRC));
-        jQuery(wym._options.titleSelector).val(jQuery(selected).attr(WYMeditor.TITLE));
-        jQuery(wym._options.relSelector).val(jQuery(selected).attr(WYMeditor.REL));
-        jQuery(wym._options.altSelector).val(jQuery(selected).attr(WYMeditor.ALT));
+        django.jQuery(wym._options.hrefSelector).val(django.jQuery(selected).attr(WYMeditor.HREF));
+        django.jQuery(wym._options.srcSelector).val(django.jQuery(selected).attr(WYMeditor.SRC));
+        django.jQuery(wym._options.titleSelector).val(django.jQuery(selected).attr(WYMeditor.TITLE));
+        django.jQuery(wym._options.relSelector).val(django.jQuery(selected).attr(WYMeditor.REL));
+        django.jQuery(wym._options.altSelector).val(django.jQuery(selected).attr(WYMeditor.ALT));
     }
 
     // auto populate image fields if selected image
     if (wym._selected_image) {
-        jQuery(wym._options.dialogImageSelector + " " + wym._options.srcSelector).val(jQuery(wym._selected_image).attr(WYMeditor.SRC));
-        jQuery(wym._options.dialogImageSelector + " " + wym._options.titleSelector).val(jQuery(wym._selected_image).attr(WYMeditor.TITLE));
-        jQuery(wym._options.dialogImageSelector + " " + wym._options.altSelector).val(jQuery(wym._selected_image).attr(WYMeditor.ALT));
+        django.jQuery(wym._options.dialogImageSelector + " " + wym._options.srcSelector).val(django.jQuery(wym._selected_image).attr(WYMeditor.SRC));
+        django.jQuery(wym._options.dialogImageSelector + " " + wym._options.titleSelector).val(django.jQuery(wym._selected_image).attr(WYMeditor.TITLE));
+        django.jQuery(wym._options.dialogImageSelector + " " + wym._options.altSelector).val(django.jQuery(wym._selected_image).attr(WYMeditor.ALT));
     }
 
-    jQuery(wym._options.dialogLinkSelector + " " +
+    django.jQuery(wym._options.dialogLinkSelector + " " +
             wym._options.submitSelector).submit(function () {
 
-        var sUrl = jQuery(wym._options.hrefSelector).val(),
+        var sUrl = django.jQuery(wym._options.hrefSelector).val(),
             link;
         if (sUrl.length > 0) {
 
@@ -854,55 +854,55 @@ WYMeditor.INIT_DIALOG = function (index) {
                 link = selected;
             } else {
                 wym._exec(WYMeditor.CREATE_LINK, sStamp);
-                link = jQuery("a[href=" + sStamp + "]", wym._doc.body);
+                link = django.jQuery("a[href=" + sStamp + "]", wym._doc.body);
             }
 
             link.attr(WYMeditor.HREF, sUrl);
-            link.attr(WYMeditor.TITLE, jQuery(wym._options.titleSelector).val());
-            link.attr(WYMeditor.REL, jQuery(wym._options.relSelector).val());
+            link.attr(WYMeditor.TITLE, django.jQuery(wym._options.titleSelector).val());
+            link.attr(WYMeditor.REL, django.jQuery(wym._options.relSelector).val());
         }
         window.close();
     });
 
-    jQuery(wym._options.dialogImageSelector + " " +
+    django.jQuery(wym._options.dialogImageSelector + " " +
             wym._options.submitSelector).submit(function () {
 
-        var sUrl = jQuery(wym._options.srcSelector).val(),
+        var sUrl = django.jQuery(wym._options.srcSelector).val(),
             $img;
         if (sUrl.length > 0) {
 
             wym._exec(WYMeditor.INSERT_IMAGE, sStamp);
 
-            $img = jQuery("img[src$=" + sStamp + "]", wym._doc.body);
+            $img = django.jQuery("img[src$=" + sStamp + "]", wym._doc.body);
             $img.attr(WYMeditor.SRC, sUrl);
-            $img.attr(WYMeditor.TITLE, jQuery(wym._options.titleSelector).val());
-            $img.attr(WYMeditor.ALT, jQuery(wym._options.altSelector).val());
+            $img.attr(WYMeditor.TITLE, django.jQuery(wym._options.titleSelector).val());
+            $img.attr(WYMeditor.ALT, django.jQuery(wym._options.altSelector).val());
         }
         window.close();
     });
 
     tableOnClick = WYMeditor.MAKE_TABLE_ONCLICK(wym);
-    jQuery(wym._options.dialogTableSelector + " " + wym._options.submitSelector)
+    django.jQuery(wym._options.dialogTableSelector + " " + wym._options.submitSelector)
         .submit(tableOnClick);
 
-    jQuery(wym._options.dialogPasteSelector + " " +
+    django.jQuery(wym._options.dialogPasteSelector + " " +
             wym._options.submitSelector).submit(function () {
 
-        var sText = jQuery(wym._options.textSelector).val();
+        var sText = django.jQuery(wym._options.textSelector).val();
         wym.paste(sText);
         window.close();
     });
 
-    jQuery(wym._options.dialogPreviewSelector + " " +
+    django.jQuery(wym._options.dialogPreviewSelector + " " +
         wym._options.previewSelector).html(wym.xhtml());
 
     //cancel button
-    jQuery(wym._options.cancelSelector).mousedown(function () {
+    django.jQuery(wym._options.cancelSelector).mousedown(function () {
         window.close();
     });
 
     //pre-init functions
-    if (jQuery.isFunction(wym._options.postInitDialog)) {
+    if (django.jQuery.isFunction(wym._options.postInitDialog)) {
         wym._options.postInitDialog(wym, window);
     }
 
@@ -912,10 +912,10 @@ WYMeditor.INIT_DIALOG = function (index) {
 
 WYMeditor.MAKE_TABLE_ONCLICK = function (wym) {
     var tableOnClick = function () {
-        var numRows = jQuery(wym._options.rowsSelector).val(),
-            numColumns = jQuery(wym._options.colsSelector).val(),
-            caption = jQuery(wym._options.captionSelector).val(),
-            summary = jQuery(wym._options.summarySelector).val(),
+        var numRows = django.jQuery(wym._options.rowsSelector).val(),
+            numColumns = django.jQuery(wym._options.colsSelector).val(),
+            caption = django.jQuery(wym._options.captionSelector).val(),
+            summary = django.jQuery(wym._options.summarySelector).val(),
 
             table = wym.insertTable(numRows, numColumns, caption, summary);
 
@@ -929,7 +929,7 @@ WYMeditor.MAKE_TABLE_ONCLICK = function (wym) {
 /********** HELPERS **********/
 
 // Returns true if it is a text node with whitespaces only
-jQuery.fn.isPhantomNode = function () {
+django.jQuery.fn.isPhantomNode = function () {
     if (this[0].nodeType === 3) {
         return !(/[^\t\n\r ]/.test(this[0].data));
     }
@@ -951,7 +951,7 @@ WYMeditor.isPhantomString = function (str) {
 
 // Returns the Parents or the node itself
 // jqexpr = a jQuery expression
-jQuery.fn.parentsOrSelf = function (jqexpr) {
+django.jQuery.fn.parentsOrSelf = function (jqexpr) {
     var n = this;
 
     if (n[0].nodeType === 3) {
@@ -4266,13 +4266,13 @@ WYMeditor.editor.prototype.init = function () {
         sContainer,
         oContainer;
 
-    if (jQuery.browser.msie) {
+    if (django.jQuery.browser.msie) {
         WymClass = new WYMeditor.WymClassExplorer(this);
-    } else if (jQuery.browser.mozilla) {
+    } else if (django.jQuery.browser.mozilla) {
         WymClass = new WYMeditor.WymClassMozilla(this);
-    } else if (jQuery.browser.opera) {
+    } else if (django.jQuery.browser.opera) {
         WymClass = new WYMeditor.WymClassOpera(this);
-    } else if (jQuery.browser.safari) {
+    } else if (django.jQuery.browser.safari) {
         WymClass = new WYMeditor.WymClassSafari(this);
     }
 
@@ -4280,12 +4280,12 @@ WYMeditor.editor.prototype.init = function () {
         return;
     }
 
-    if (jQuery.isFunction(this._options.preInit)) {
+    if (django.jQuery.isFunction(this._options.preInit)) {
         this._options.preInit(this);
     }
 
     SaxListener = new WYMeditor.XhtmlSaxListener();
-    jQuery.extend(SaxListener, WymClass);
+    django.jQuery.extend(SaxListener, WymClass);
     this.parser = new WYMeditor.XhtmlParser(SaxListener);
 
     if (this._options.styles || this._options.stylesheet) {
@@ -4307,7 +4307,7 @@ WYMeditor.editor.prototype.init = function () {
     }
 
     // Load wymbox
-    this._box = jQuery(this._element).
+    this._box = django.jQuery(this._element).
         hide().
         after(this._options.boxHtml).
         next().
@@ -4315,9 +4315,9 @@ WYMeditor.editor.prototype.init = function () {
 
     // Store the instance index and replaced element in wymbox
     // but keep it compatible with jQuery < 1.2.3, see #122
-    if (jQuery.isFunction(jQuery.fn.data)) {
-        jQuery.data(this._box.get(0), WYMeditor.WYM_INDEX, this._index);
-        jQuery.data(this._element.get(0), WYMeditor.WYM_INDEX, this._index);
+    if (django.jQuery.isFunction(django.jQuery.fn.data)) {
+        django.jQuery.data(this._box.get(0), WYMeditor.WYM_INDEX, this._index);
+        django.jQuery.data(this._element.get(0), WYMeditor.WYM_INDEX, this._index);
     }
 
     h = WYMeditor.Helper;
@@ -4332,7 +4332,7 @@ WYMeditor.editor.prototype.init = function () {
     );
 
     // Construct wymbox
-    boxHtml = jQuery(this._box).html();
+    boxHtml = django.jQuery(this._box).html();
 
     boxHtml = h.replaceAll(boxHtml, WYMeditor.LOGO, this._options.logoHtml);
     boxHtml = h.replaceAll(boxHtml, WYMeditor.TOOLS, this._options.toolsHtml);
@@ -4414,10 +4414,10 @@ WYMeditor.editor.prototype.init = function () {
     boxHtml = this.replaceStrings(boxHtml);
 
     // Load the html in wymbox
-    jQuery(this._box).html(boxHtml);
+    django.jQuery(this._box).html(boxHtml);
 
     // Hide the html value
-    jQuery(this._box).find(this._options.htmlSelector).hide();
+    django.jQuery(this._box).find(this._options.htmlSelector).hide();
 
     this.loadSkin();
 };
@@ -4434,35 +4434,35 @@ WYMeditor.editor.prototype.bindEvents = function () {
         $html_val;
 
     // Handle click events on tools buttons
-    jQuery(this._box).find(this._options.toolSelector).click(function () {
+    django.jQuery(this._box).find(this._options.toolSelector).click(function () {
         wym._iframe.contentWindow.focus(); //See #154
-        wym.exec(jQuery(this).attr(WYMeditor.NAME));
+        wym.exec(django.jQuery(this).attr(WYMeditor.NAME));
         return false;
     });
 
     // Handle click events on containers buttons
-    jQuery(this._box).find(this._options.containerSelector).click(function () {
-        wym.container(jQuery(this).attr(WYMeditor.NAME));
+    django.jQuery(this._box).find(this._options.containerSelector).click(function () {
+        wym.container(django.jQuery(this).attr(WYMeditor.NAME));
         return false;
     });
 
     // Handle keyup event on html value: set the editor value
     // Handle focus/blur events to check if the element has focus, see #147
-    $html_val = jQuery(this._box).find(this._options.htmlValSelector);
+    $html_val = django.jQuery(this._box).find(this._options.htmlValSelector);
     $html_val.keyup(function () {
-        jQuery(wym._doc.body).html(jQuery(this).val());
+        django.jQuery(wym._doc.body).html(django.jQuery(this).val());
     });
     $html_val.focus(function () {
-        jQuery(this).toggleClass('hasfocus');
+        django.jQuery(this).toggleClass('hasfocus');
     });
     $html_val.blur(function () {
-        jQuery(this).toggleClass('hasfocus');
+        django.jQuery(this).toggleClass('hasfocus');
     });
 
     // Handle click events on classes buttons
-    jQuery(this._box).find(this._options.classSelector).click(function () {
+    django.jQuery(this._box).find(this._options.classSelector).click(function () {
         var aClasses = eval(wym._options.classesItems),
-            sName = jQuery(this).attr(WYMeditor.NAME),
+            sName = django.jQuery(this).attr(WYMeditor.NAME),
 
             oClass = WYMeditor.Helper.findByName(aClasses, sName),
             jqexpr;
@@ -4476,7 +4476,7 @@ WYMeditor.editor.prototype.bindEvents = function () {
     });
 
     // Handle update event on update element
-    jQuery(this._options.updateSelector).bind(this._options.updateEvent, function () {
+    django.jQuery(this._options.updateSelector).bind(this._options.updateEvent, function () {
         wym.update();
     });
 };
@@ -4503,10 +4503,10 @@ WYMeditor.editor.prototype.box = function () {
 */
 WYMeditor.editor.prototype.html = function (html) {
     if (typeof html === 'string') {
-        jQuery(this._doc.body).html(html);
+        django.jQuery(this._doc.body).html(html);
         this.update();
     } else {
-        return jQuery(this._doc.body).html();
+        return django.jQuery(this._doc.body).html();
     }
 };
 
@@ -4522,7 +4522,7 @@ WYMeditor.editor.prototype.xhtml = function () {
 
     // Remove any of the placeholder nodes we've created for start/end content
     // insertion
-    jQuery(this._doc.body).children(WYMeditor.BR).remove();
+    django.jQuery(this._doc.body).children(WYMeditor.BR).remove();
 
     return this.parser.parse(this.html());
 };
@@ -4582,7 +4582,7 @@ WYMeditor.editor.prototype.exec = function (cmd) {
 
     default:
         custom_run = false;
-        jQuery.each(this._options.customCommands, function () {
+        django.jQuery.each(this._options.customCommands, function () {
             if (cmd === this.name) {
                 custom_run = true;
                 this.run.apply(_this);
@@ -4806,13 +4806,13 @@ WYMeditor.editor.prototype.toggleClass = function (sClass, jqexpr) {
     if (this._selected_image) {
         container = this._selected_image;
     } else {
-        container = jQuery(this.selected());
+        container = django.jQuery(this.selected());
     }
-    container = jQuery(container).parentsOrSelf(jqexpr);
-    jQuery(container).toggleClass(sClass);
+    container = django.jQuery(container).parentsOrSelf(jqexpr);
+    django.jQuery(container).toggleClass(sClass);
 
-    if (!jQuery(container).attr(WYMeditor.CLASS)) {
-        jQuery(container).removeAttr(this._class);
+    if (!django.jQuery(container).attr(WYMeditor.CLASS)) {
+        django.jQuery(container).removeAttr(this._class);
     }
 };
 
@@ -4877,10 +4877,10 @@ WYMeditor.editor.prototype.findUp = function (node, filter) {
 */
 WYMeditor.editor.prototype.switchTo = function (node, sType) {
     var newNode = this._doc.createElement(sType),
-        html = jQuery(node).html();
+        html = django.jQuery(node).html();
 
     node.parentNode.replaceChild(newNode, node);
-    jQuery(newNode).html(html);
+    django.jQuery(newNode).html(html);
 
     this.setFocusToNode(newNode);
 };
@@ -4891,7 +4891,7 @@ WYMeditor.editor.prototype.replaceStrings = function (sVal) {
     // if not, get it via a synchronous ajax call
     if (!WYMeditor.STRINGS[this._options.lang]) {
         try {
-            eval(jQuery.ajax({url: this._options.langPath +
+            eval(django.jQuery.ajax({url: this._options.langPath +
                 this._options.lang + '.js', async: false}).responseText);
         } catch (e) {
             WYMeditor.console.error(
@@ -4928,7 +4928,7 @@ WYMeditor.editor.prototype.encloseString = function (sVal) {
 */
 WYMeditor.editor.prototype.status = function (sMessage) {
     // Print status message
-    jQuery(this._box).find(this._options.statusSelector).html(sMessage);
+    django.jQuery(this._box).find(this._options.statusSelector).html(sMessage);
 };
 
 /**
@@ -4941,11 +4941,11 @@ WYMeditor.editor.prototype.update = function () {
     var html;
 
     // Dirty fix to remove stray line breaks (#189)
-    jQuery(this._doc.body).children(WYMeditor.BR).remove();
+    django.jQuery(this._doc.body).children(WYMeditor.BR).remove();
 
     html = this.xhtml();
-    jQuery(this._element).val(html);
-    jQuery(this._box).find(this._options.htmlValSelector).not('.hasfocus').val(html); //#147
+    django.jQuery(this._element).val(html);
+    django.jQuery(this._box).find(this._options.htmlValSelector).not('.hasfocus').val(html); //#147
     this.fixBodyHtml();
 };
 
@@ -5157,7 +5157,7 @@ WYMeditor.editor.prototype.dialog = function (dialogType, dialogFeatures, bodyHt
     Show/Hide the HTML textarea.
 */
 WYMeditor.editor.prototype.toggleHtml = function () {
-    jQuery(this._box).find(this._options.htmlSelector).toggle();
+    django.jQuery(this._box).find(this._options.htmlSelector).toggle();
 };
 
 WYMeditor.editor.prototype.uniqueStamp = function () {
@@ -5322,7 +5322,7 @@ WYMeditor.editor.prototype.paste = function (str) {
 
         if (isSingleLine) {
             // Easy case. Wrap the string in p tags
-            paragraphs = jQuery(
+            paragraphs = django.jQuery(
                 '<p>' + paragraphStrings[0] + '</p>',
                 this._doc
             ).appendTo(this._doc.body);
@@ -5925,20 +5925,20 @@ WYMeditor.editor.prototype.insertTable = function (rows, columns, caption, summa
 
     if (summary !== "") {
         // Only need to set the summary if we actually have a summary
-        jQuery(table).attr('summary', summary);
+        django.jQuery(table).attr('summary', summary);
     }
 
     // Find the currently-selected container
-    container = jQuery(
+    container = django.jQuery(
         this.findUp(this.container(), WYMeditor.MAIN_CONTAINERS)
     ).get(0);
 
     if (!container || !container.parentNode) {
         // No valid selected container. Put the table at the end.
-        jQuery(this._doc.body).append(table);
+        django.jQuery(this._doc.body).append(table);
     } else {
         // Append the table after the currently-selected container
-        jQuery(container).after(table);
+        django.jQuery(container).after(table);
     }
 
     // Handle any browser-specific cleanup
@@ -5961,7 +5961,7 @@ WYMeditor.editor.prototype.configureEditorUsingRawCss = function () {
     var CssParser = new WYMeditor.WymCssParser();
     if (this._options.stylesheet) {
         CssParser.parse(
-            jQuery.ajax({
+            django.jQuery.ajax({
                 url: this._options.stylesheet,
                 async: false
             }).responseText
@@ -5987,7 +5987,7 @@ WYMeditor.editor.prototype.listen = function () {
     // Don't use jQuery.find() on the iframe body
     // because of MSIE + jQuery + expando issue (#JQ1143)
 
-    jQuery(this._doc.body).bind("mousedown", function (e) {
+    django.jQuery(this._doc.body).bind("mousedown", function (e) {
         wym.mousedown(e);
     });
 };
@@ -6014,7 +6014,7 @@ WYMeditor.loadCss = function (href) {
     link.rel = 'stylesheet';
     link.href = href;
 
-    head = jQuery('head').get(0);
+    head = django.jQuery('head').get(0);
     head.appendChild(link);
 };
 
@@ -6035,7 +6035,7 @@ WYMeditor.editor.prototype.loadSkin = function () {
             rExp = new RegExp(this._options.skin +
                 '\/' + WYMeditor.SKINS_DEFAULT_CSS + '$');
 
-        jQuery('link').each(function () {
+        django.jQuery('link').each(function () {
             if (this.href.match(rExp)) {
                 found = true;
             }
@@ -6050,12 +6050,12 @@ WYMeditor.editor.prototype.loadSkin = function () {
     }
 
     // Put the classname (ex. wym_skin_default) on wym_box
-    jQuery(this._box).addClass("wym_skin_" + this._options.skin);
+    django.jQuery(this._box).addClass("wym_skin_" + this._options.skin);
 
     // Does the user want to use some JS to initialize the skin (default: yes)?
     // Also check if it hasn't already been loaded by another instance
     if (this._options.initSkin && !WYMeditor.SKINS[this._options.skin]) {
-        eval(jQuery.ajax({url: this._options.skinPath +
+        eval(django.jQuery.ajax({url: this._options.skinPath +
             WYMeditor.SKINS_DEFAULT_JS, async: false}).responseText);
     }
 
@@ -6109,10 +6109,10 @@ WYMeditor.WymClassExplorer.prototype.initIframe = function (iframe) {
     this._doc.title = this._wym._index;
 
     //set the text direction
-    jQuery('html', this._doc).attr('dir', this._options.direction);
+    django.jQuery('html', this._doc).attr('dir', this._options.direction);
 
     //init html value
-    jQuery(this._doc.body).html(this._wym._html);
+    django.jQuery(this._doc.body).html(this._wym._html);
 
     //handle events
     var wym = this;
@@ -6153,7 +6153,7 @@ WYMeditor.WymClassExplorer.prototype.initIframe = function (iframe) {
     if (this._initialized) {
 
         //pre-bind functions
-        if (jQuery.isFunction(this._options.preBind)) {
+        if (django.jQuery.isFunction(this._options.preBind)) {
             this._options.preBind(this);
         }
 
@@ -6162,7 +6162,7 @@ WYMeditor.WymClassExplorer.prototype.initIframe = function (iframe) {
         this._wym.bindEvents();
 
         //post-init functions
-        if (jQuery.isFunction(this._options.postInit)) {
+        if (django.jQuery.isFunction(this._options.postInit)) {
             this._options.postInit(this);
         }
 
@@ -6186,7 +6186,7 @@ WYMeditor.WymClassExplorer.prototype.initIframe = function (iframe) {
         // Mark container items as unselectable (#203)
         // Fix for issue explained:
         // http://stackoverflow.com/questions/1470932/ie8-iframe-designmode-loses-selection
-        jQuery(this._box).find(this._options.containerSelector).attr('unselectable', 'on');
+        django.jQuery(this._box).find(this._options.containerSelector).attr('unselectable', 'on');
 
         editorLoadSkin.call(this);
     };
@@ -6253,7 +6253,7 @@ WYMeditor.WymClassExplorer.prototype.insert = function (html) {
     var range = this._doc.selection.createRange();
 
     // Check if the current selection is inside the editor
-    if (jQuery(range.parentElement()).parents().is(this._options.iframeBodySelector)) {
+    if (django.jQuery(range.parentElement()).parents().is(this._options.iframeBodySelector)) {
         try {
             // Overwrite selection with provided html
             range.pasteHTML(html);
@@ -6269,7 +6269,7 @@ WYMeditor.WymClassExplorer.prototype.wrap = function (left, right) {
     var range = this._doc.selection.createRange();
 
     // Check if the current selection is inside the editor
-    if (jQuery(range.parentElement()).parents().is(this._options.iframeBodySelector)) {
+    if (django.jQuery(range.parentElement()).parents().is(this._options.iframeBodySelector)) {
         try {
             // Overwrite selection with provided html
             range.pasteHTML(left + range.text + right);
@@ -6282,7 +6282,7 @@ WYMeditor.WymClassExplorer.prototype.unwrap = function () {
     var range = this._doc.selection.createRange();
 
     // Check if the current selection is inside the editor
-    if (jQuery(range.parentElement()).parents().is(this._options.iframeBodySelector)) {
+    if (django.jQuery(range.parentElement()).parents().is(this._options.iframeBodySelector)) {
         try {
             // Unwrap selection
             var text = range.text;
@@ -6442,7 +6442,7 @@ WYMeditor.WymClassMozilla.prototype.initIframe = function (iframe) {
     this._doc.title = this._wym._index;
 
     //set the text direction
-    jQuery('html', this._doc).attr('dir', this._options.direction);
+    django.jQuery('html', this._doc).attr('dir', this._options.direction);
 
     //init html value
     this.html(this._wym._html);
@@ -6451,7 +6451,7 @@ WYMeditor.WymClassMozilla.prototype.initIframe = function (iframe) {
     this.enableDesignMode();
 
     //pre-bind functions
-    if (jQuery.isFunction(this._options.preBind)) {
+    if (django.jQuery.isFunction(this._options.preBind)) {
         this._options.preBind(this);
     }
 
@@ -6459,22 +6459,22 @@ WYMeditor.WymClassMozilla.prototype.initIframe = function (iframe) {
     this._wym.bindEvents();
 
     //bind editor keydown events
-    jQuery(this._doc).bind("keydown", this.keydown);
+    django.jQuery(this._doc).bind("keydown", this.keydown);
 
     //bind editor keyup events
-    jQuery(this._doc).bind("keyup", this.keyup);
+    django.jQuery(this._doc).bind("keyup", this.keyup);
 
     //bind editor click events
-    jQuery(this._doc).bind("click", this.click);
+    django.jQuery(this._doc).bind("click", this.click);
 
     //bind editor focus events (used to reset designmode - Gecko bug)
-    jQuery(this._doc).bind("focus", function () {
+    django.jQuery(this._doc).bind("focus", function () {
         // Fix scope
         wym.enableDesignMode.call(wym);
     });
 
     //post-init functions
-    if (jQuery.isFunction(this._options.postInit)) {
+    if (django.jQuery.isFunction(this._options.postInit)) {
         this._options.postInit(this);
     }
 
@@ -6502,13 +6502,13 @@ WYMeditor.WymClassMozilla.prototype.html = function (html) {
         html = html.replace(/<\/strong>/gi, "</b>");
 
         //update the html body
-        jQuery(this._doc.body).html(html);
+        django.jQuery(this._doc.body).html(html);
         this._wym.fixBodyHtml();
 
         //re-init designMode
         this.enableDesignMode();
     } else {
-        return jQuery(this._doc.body).html();
+        return django.jQuery(this._doc.body).html();
     }
     return false;
 };
@@ -6625,7 +6625,7 @@ WYMeditor.WymClassMozilla.prototype.click = function (evt) {
         if (container && container.tagName.toLowerCase() === WYMeditor.TR) {
             // Starting with FF 3.6, inserted tables need some content in their
             // cells before they're editable
-            jQuery(WYMeditor.TD, wym._doc.body).
+            django.jQuery(WYMeditor.TD, wym._doc.body).
                 append(WYMeditor.WymClassMozilla.CELL_PLACEHOLDER);
 
             // The user is still going to need to move out of and then back in
@@ -6744,7 +6744,7 @@ WYMeditor.WymClassOpera.prototype.initIframe = function(iframe) {
     this._doc.title = this._wym._index;
 
     //set the text direction
-    jQuery('html', this._doc).attr('dir', this._options.direction);
+    django.jQuery('html', this._doc).attr('dir', this._options.direction);
 
     //init designMode
     this._doc.designMode = "on";
@@ -6753,7 +6753,7 @@ WYMeditor.WymClassOpera.prototype.initIframe = function(iframe) {
     this.html(this._wym._html);
 
     //pre-bind functions
-    if (jQuery.isFunction(this._options.preBind)) {
+    if (django.jQuery.isFunction(this._options.preBind)) {
         this._options.preBind(this);
     }
 
@@ -6761,13 +6761,13 @@ WYMeditor.WymClassOpera.prototype.initIframe = function(iframe) {
     this._wym.bindEvents();
 
     //bind editor keydown events
-    jQuery(this._doc).bind("keydown", this.keydown);
+    django.jQuery(this._doc).bind("keydown", this.keydown);
 
     //bind editor events
-    jQuery(this._doc).bind("keyup", this.keyup);
+    django.jQuery(this._doc).bind("keyup", this.keyup);
 
     //post-init functions
-    if (jQuery.isFunction(this._options.postInit)) {
+    if (django.jQuery.isFunction(this._options.postInit)) {
         this._options.postInit(this);
     }
 
@@ -6810,8 +6810,8 @@ WYMeditor.WymClassOpera.prototype.keydown = function(evt) {
     startNode = sel.getRangeAt(0).startContainer;
 
     //Get a P instead of no container
-    if (!jQuery(startNode).parentsOrSelf(WYMeditor.MAIN_CONTAINERS.join(","))[0] &&
-            !jQuery(startNode).parentsOrSelf('li') &&
+    if (!django.jQuery(startNode).parentsOrSelf(WYMeditor.MAIN_CONTAINERS.join(","))[0] &&
+            !django.jQuery(startNode).parentsOrSelf('li') &&
             evt.keyCode != WYMeditor.KEY.ENTER &&
             evt.keyCode != WYMeditor.KEY.LEFT &&
             evt.keyCode != WYMeditor.KEY.UP &&
@@ -6871,7 +6871,7 @@ WYMeditor.WymClassSafari.prototype.initIframe = function (iframe) {
     this._doc.title = this._wym._index;
 
     //set the text direction
-    jQuery('html', this._doc).attr('dir', this._options.direction);
+    django.jQuery('html', this._doc).attr('dir', this._options.direction);
 
     //init designMode
     this._doc.designMode = "on";
@@ -6880,7 +6880,7 @@ WYMeditor.WymClassSafari.prototype.initIframe = function (iframe) {
     this.html(this._wym._html);
 
     //pre-bind functions
-    if (jQuery.isFunction(this._options.preBind)) {
+    if (django.jQuery.isFunction(this._options.preBind)) {
         this._options.preBind(this);
     }
 
@@ -6888,13 +6888,13 @@ WYMeditor.WymClassSafari.prototype.initIframe = function (iframe) {
     this._wym.bindEvents();
 
     //bind editor keydown events
-    jQuery(this._doc).bind("keydown", this.keydown);
+    django.jQuery(this._doc).bind("keydown", this.keydown);
 
     //bind editor keyup events
-    jQuery(this._doc).bind("keyup", this.keyup);
+    django.jQuery(this._doc).bind("keyup", this.keyup);
 
     //post-init functions
-    if (jQuery.isFunction(this._options.postInit)) {
+    if (django.jQuery.isFunction(this._options.postInit)) {
         this._options.postInit(this);
     }
 
@@ -6920,7 +6920,7 @@ WYMeditor.WymClassSafari.prototype._exec = function (cmd, param) {
         //Find the container, and remove it.
         container = this.findUp(focusNode, WYMeditor.MAIN_CONTAINERS);
         if (container) {
-            jQuery(container).replaceWith(jQuery(container).html());
+            django.jQuery(container).replaceWith(django.jQuery(container).html());
         }
 
         break;
@@ -7874,7 +7874,7 @@ WYMeditor.XhtmlValidator = {
                         valid_attributes[attribute] = value;
                     }
                 } else {
-                    jQuery.each(possible_attributes, function() {
+                    django.jQuery.each(possible_attributes, function() {
                         if(this.match(/\/(.*)\//)) {
                             regex = new RegExp(this.match(/\/(.*)\//)[1]);
                             if(regex.test(attribute)) {
@@ -8458,7 +8458,7 @@ WYMeditor.Lexer.prototype._reduce = function(raw) {
 *    @author Bermi Ferrer (http://bermi.org)
 */
 WYMeditor.XhtmlLexer = function(parser) {
-    jQuery.extend(this, new WYMeditor.Lexer(parser, 'Text'));
+    django.jQuery.extend(this, new WYMeditor.Lexer(parser, 'Text'));
 
     this.mapHandler('Text', 'Text');
 
@@ -9099,7 +9099,7 @@ WYMeditor.WymCssLexer = function(parser, only_wym_blocks)
 {
     only_wym_blocks = (typeof only_wym_blocks == 'undefined' ? true : only_wym_blocks);
 
-    jQuery.extend(this, new WYMeditor.Lexer(parser, (only_wym_blocks?'Ignore':'WymCss')));
+    django.jQuery.extend(this, new WYMeditor.Lexer(parser, (only_wym_blocks?'Ignore':'WymCss')));
 
     this.mapHandler('WymCss', 'Ignore');
 

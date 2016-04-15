@@ -185,4 +185,4 @@
 		$('#plugin_'+plugin_id).remove();
 	}
 
-})(jQuery);
+})(django.jQuery);

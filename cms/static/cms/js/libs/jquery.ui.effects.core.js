@@ -7,7 +7,7 @@
  *
  * http://docs.jquery.com/UI/Effects/
  */
-;jQuery.effects || (function($) {
+;django.jQuery.effects || (function($) {
 
 $.effects = {
 	version: "1.7.1",
@@ -540,4 +540,4 @@ $.extend($.easing,
  *
  */
 
-})(jQuery);
+})(django.jQuery);

@@ -640,4 +640,4 @@ function log() {
         window.console.log('[jquery.form] ' + Array.prototype.join.call(arguments,''));
 };
 
-})(jQuery);
+})(django.jQuery);

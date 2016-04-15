@@ -50,8 +50,8 @@
 WYMeditor.editor.prototype.resizable = function(options) {
 
     var wym = this;
-    var $iframe = jQuery(wym._box).find('iframe');
-    var $iframe_div = jQuery(wym._box).find('.wym_iframe');
+    var $iframe = django.jQuery(wym._box).find('iframe');
+    var $iframe_div = django.jQuery(wym._box).find('.wym_iframe');
     var iframeOriginalSize = {};
 
     // Define some default options
@@ -66,10 +66,10 @@ WYMeditor.editor.prototype.resizable = function(options) {
 
     // Merge given options with default options. Given options override
     // default ones.
-    var final_options = jQuery.extend(default_options, options);
+    var final_options = django.jQuery.extend(default_options, options);
 
-    if (jQuery.isFunction(jQuery.fn.resizable)) {
-        jQuery(wym._box).resizable(final_options);
+    if (django.jQuery.isFunction(django.jQuery.fn.resizable)) {
+        django.jQuery(wym._box).resizable(final_options);
     } else {
         WYMeditor.console.error('Oops, jQuery UI.resizable unavailable.');
     }

@@ -1,13 +1,13 @@
-jQuery.fn.selectify = function() {
+django.jQuery.fn.selectify = function() {
     return this.each(function() {
-        jQuery(this).hover(
+        django.jQuery(this).hover(
             function() {
-                jQuery("h2", this).css("background-position", "0px -18px");
-                jQuery("ul", this).fadeIn("fast");
+                django.jQuery("h2", this).css("background-position", "0px -18px");
+                django.jQuery("ul", this).fadeIn("fast");
             },
 		    function() {
-		        jQuery("h2", this).css("background-position", "");
-		        jQuery("ul", this).fadeOut("fast");
+		        django.jQuery("h2", this).css("background-position", "");
+		        django.jQuery("ul", this).fadeOut("fast");
 		    }
         );
     });
@@ -21,7 +21,7 @@ WYMeditor.SKINS.minimal = {
     init: function(wym) {
 
         //render following sections as dropdown menus
-        jQuery(wym._box).find(wym._options.toolsSelector + ', ' + wym._options.containersSelector + ', ' + wym._options.classesSelector)
+        django.jQuery(wym._box).find(wym._options.toolsSelector + ', ' + wym._options.containersSelector + ', ' + wym._options.classesSelector)
           .addClass("wym_dropdown")
           .selectify();
 

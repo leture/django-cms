@@ -184,4 +184,4 @@
 		addLabel: true
     };
     
-})(jQuery);
+})(django.jQuery);

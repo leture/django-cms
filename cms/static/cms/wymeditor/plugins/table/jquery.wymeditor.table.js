@@ -17,7 +17,7 @@
  * @class
  */
 function TableEditor(options, wym) {
-    options = jQuery.extend({
+    options = django.jQuery.extend({
         sMergeRowButtonHtml: String() +
             '<li class="wym_tools_merge_row">' +
                 '<a name="merge_row" href="#" title="Merge Cells" ' +
@@ -470,7 +470,7 @@ TableEditor.prototype.mergeRow = function (sel) {
     // Add a colspan to the farthest-left cell
     var combinedColspan = this.getTotalColumns(cells);
     if ($.browser.msie) {
-        // jQuery.attr doesn't work for colspan in ie
+        // django.jQuery.attr doesn't work for colspan in ie
         mergeCell.colSpan = combinedColspan;
     } else {
         $(mergeCell).attr('colspan', combinedColspan);

@@ -41,7 +41,7 @@ var xslTransform = {
 	init: function(){
 		// check for v1.0.4 / v1.1 or later of jQuery
 		try{
-			parseFloat(jQuery.fn.jquery) >= 1;
+			parseFloat(django.jQuery.fn.jquery) >= 1;
 		}catch(e){
 			alert('xslTransform requires jQuery 1.0.4 or greater ... please load it prior to xslTransform');
 		}
@@ -52,12 +52,12 @@ var xslTransform = {
 			alert('Missing Sarissa ... please load it prior to xslTransform');
 		}
 		// if no log function, create a blank one
-		if( !jQuery.log ){
-			jQuery.log = function(){};
-			jQuery.fn.debug = function(){};
+		if( !django.jQuery.log ){
+			django.jQuery.log = function(){};
+			django.jQuery.fn.debug = function(){};
 		}
 		// log the version
-		if(this.debug) jQuery.log( 'xslTransform:init(): version ' + xslTransform.version );
+		if(this.debug) django.jQuery.log( 'xslTransform:init(): version ' + xslTransform.version );
 	},
 
 	// initialize Sarissa's serializer
@@ -71,7 +71,7 @@ var xslTransform = {
 	 * @returns String
 	 */
 	serialize: function( data ){
-		if(this.debug) jQuery.log( 'serialize(): received ' + typeof(data) );
+		if(this.debug) django.jQuery.log( 'serialize(): received ' + typeof(data) );
 		// if it's already a string, no further processing required
 		if( typeof(data) == 'string' ){
 			return data;
@@ -88,7 +88,7 @@ var xslTransform = {
 	 * @returns Object
 	 */
 	load: function( xml, meth ){
-		if(this.debug) jQuery.log( 'load(): received ' + typeof(xml) );
+		if(this.debug) django.jQuery.log( 'load(): received ' + typeof(xml) );
 		// the result
 		var r;
 
@@ -124,13 +124,13 @@ var xslTransform = {
 	 * @returns Object
 	 */
 	loadString: function( str ){
-		if(this.debug) jQuery.log( 'loadString(): ' + str + '::' + typeof(str) );
+		if(this.debug) django.jQuery.log( 'loadString(): ' + str + '::' + typeof(str) );
 
 		// use Sarissa to generate an XML doc
 		var p = new DOMParser();
 		var xml = p.parseFromString( str, 'text/xml' );
 		if( !xml ){
-			if(this.debug) jQuery.log( 'loadString(): parseFromString() failed' );
+			if(this.debug) django.jQuery.log( 'loadString(): parseFromString() failed' );
 			return false;
 		}
 		return xml;
@@ -145,10 +145,10 @@ var xslTransform = {
 	 * @returns Object
 	 */
 	loadFile: function( url, meth ){
-		if(this.debug) jQuery.log( 'loadFile(): ' + url + '::' + typeof(url) );
+		if(this.debug) django.jQuery.log( 'loadFile(): ' + url + '::' + typeof(url) );
 
 		if( !url ){
-			if(this.debug) jQuery.log( 'ERROR: loadFile() missing url' );
+			if(this.debug) django.jQuery.log( 'ERROR: loadFile() missing url' );
 			return false;
 		}
 
@@ -156,7 +156,7 @@ var xslTransform = {
 		var doc;
 		// function to receive data on successful download ... semicolon after brace is necessary for packing
 		this.xhrsuccess = function(data,str){
-			if(this.debug) jQuery.log( 'loadFile() completed successfully (' + str + ')' );
+			if(this.debug) django.jQuery.log( 'loadFile() completed successfully (' + str + ')' );
 			doc = data;
 			return true;
 		};
@@ -164,7 +164,7 @@ var xslTransform = {
 		this.xhrerror = function(xhr,err){
 			// set debugging to true in order to force the display of this error
 			window.DEBUG = true;
-			if(this.debug) jQuery.log( 'loadFile() failed to load the requested file: (' + err + ') - xml: ' + xhr.responseXML + ' - text: ' + xhr.responseText );
+			if(this.debug) django.jQuery.log( 'loadFile() failed to load the requested file: (' + err + ') - xml: ' + xhr.responseXML + ' - text: ' + xhr.responseText );
 			doc = null;
 			return false;
 		};
@@ -181,12 +181,12 @@ var xslTransform = {
 
 		// check for total failure
 		if( !doc ){
-			if(this.debug) jQuery.log( 'ERROR: document ' + url + ' not found (404), or unable to load' );
+			if(this.debug) django.jQuery.log( 'ERROR: document ' + url + ' not found (404), or unable to load' );
 			return false;
 		}
 		// check for success but no data
 		if( doc.length == 0 ){
-			if(this.debug) jQuery.log( 'ERROR: document ' + url + ' loaded in loadFile() has no data' );
+			if(this.debug) django.jQuery.log( 'ERROR: document ' + url + ' loaded in loadFile() has no data' );
 			return false;
 		}
 		return doc;
@@ -208,7 +208,7 @@ var xslTransform = {
 	 */
 	transform: function( xsl, xml, options ){
 		var log = { 'xsl':xsl, 'xml':xml, 'options':options };
-		if(this.debug) jQuery.log( 'transform(): ' + xsl + '::' + xml + '::' + options.toString() );
+		if(this.debug) django.jQuery.log( 'transform(): ' + xsl + '::' + xml + '::' + options.toString() );
 
 		// initialize options hash
 		options = options || {};
@@ -217,7 +217,7 @@ var xslTransform = {
 		var xml = { 'request':xml, 'doc':this.load(xml, options.meth) };
 		// if we have an xpath, replace xml.doc with the results of running it
 		// as of 2007-12-03, IE throws a "msxml6: the parameter is incorrect" error, so removing this
-		if( options.xpath && xml.doc && !jQuery.browser.msie ){
+		if( options.xpath && xml.doc && !django.jQuery.browser.msie ){
 			// run the xpath
 			xml.doc = xml.doc.selectSingleNode( options.xpath.toString() );
 			if(this.debug) $.log( 'transform(): xpath has been run...resulting doc: ' + (this.serialize(xml.doc)) );
@@ -236,7 +236,7 @@ var xslTransform = {
 		processor.importStylesheet( result.xsl );
 		// add parameters to the processor
 		if( options.params && processor ){
-			if(this.debug) jQuery.log( 'transform(): received xsl params: ' + options.params.toString() );
+			if(this.debug) django.jQuery.log( 'transform(): received xsl params: ' + options.params.toString() );
 			for( key in options.params ){
 				// name and value must be strings
 				// first parameter is namespace
@@ -248,18 +248,18 @@ var xslTransform = {
 		result.doc = processor.transformToDocument( xml.doc );
 		// handle transform error
 		var errorTxt = Sarissa.getParseErrorText(result.doc);
-		if(this.debug) jQuery.log( 'transform(): Sarissa parse text: ' + errorTxt );
+		if(this.debug) django.jQuery.log( 'transform(): Sarissa parse text: ' + errorTxt );
 		if( errorTxt != Sarissa.PARSED_OK ){
 			// return the error text as the string
 			result.string = Sarissa.getParseErrorText(result.doc) + ' :: using ' + xsl + ' => ' + xml.request;
-			if(this.debug) jQuery.log( 'transform(): error in transformation: ' + Sarissa.getParseErrorText(result.doc) );
+			if(this.debug) django.jQuery.log( 'transform(): error in transformation: ' + Sarissa.getParseErrorText(result.doc) );
 			return result;
 		}
 
 		// if we made it this far, the transformation was successful
 		result.string = this.serialize( result.doc );
 		// store reference to all scripts found in the doc (not result.string)
-		result.scripts = jQuery('script',result.doc).text();
+		result.scripts = django.jQuery('script',result.doc).text();
 
 		return result;
 	}
@@ -287,7 +287,7 @@ xslTransform.init();
  *		+ callback: if a Function, evaluate it when transformation is complete
  * @returns
  */
-jQuery.fn.getTransform = function( xsl, xml, options ){
+django.jQuery.fn.getTransform = function( xsl, xml, options ){
 	var settings = {
 		append: false,
 		params: {},		// object of key/value pairs ... parameters to send to the XSL stylesheet
@@ -298,12 +298,12 @@ jQuery.fn.getTransform = function( xsl, xml, options ){
 		meth : "GET"
 	};
 	// initialize options hash; override the defaults with supplied options
-	jQuery.extend( settings, options );
-	if(xslTransform.debug) jQuery.log( 'getTransform: ' + xsl + '::' + xml + '::' + settings.toString() );
+	django.jQuery.extend( settings, options );
+	if(xslTransform.debug) django.jQuery.log( 'getTransform: ' + xsl + '::' + xml + '::' + settings.toString() );
 
 	// must have both xsl and xml
 	if( !xsl || !xml ){
-		if(xslTransform.debug) jQuery.log( 'getTransform: missing xsl or xml' );
+		if(xslTransform.debug) django.jQuery.log( 'getTransform: missing xsl or xml' );
 		return;
 	}
 
@@ -316,7 +316,7 @@ jQuery.fn.getTransform = function( xsl, xml, options ){
 		var re = trans.string.match(/<\?xml.*?\?>/);
 		if( re ){
 			trans.string = trans.string.replace( re, '' );
-			if(xslTransform.debug) jQuery.log( 'getTransform(): found an xml declaration and removed it' );
+			if(xslTransform.debug) django.jQuery.log( 'getTransform(): found an xml declaration and removed it' );
 		}
 
 		// place the result in the element
@@ -335,13 +335,13 @@ jQuery.fn.getTransform = function( xsl, xml, options ){
 		// there might not be a scripts property
 		if( settings.eval && trans.scripts ){
 			if( trans.scripts.length > 0 ){
-				if(xslTransform.debug) jQuery.log( 'Found text/javascript in transformed result' );
+				if(xslTransform.debug) django.jQuery.log( 'Found text/javascript in transformed result' );
 				eval.call( window, trans.scripts );
 			}
 		}
 
 		// run the callback if it's a native function
-		if( settings.callback && jQuery.isFunction(settings.callback) ){
+		if( settings.callback && django.jQuery.isFunction(settings.callback) ){
 			var json = false;
 			if(settings.json && trans.json) eval("json = " + trans.json.firstChild.data);
 			settings.callback.apply(window, [trans.string, json]);

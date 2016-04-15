@@ -136,4 +136,4 @@
 			window.location = url;
 		}
 	}
-})(jQuery);
+})(django.jQuery);
