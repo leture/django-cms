@@ -7,6 +7,7 @@ from cms.models.fields import PlaceholderField
 from cms.models.placeholdermodel import Placeholder
 from cms.models.pluginmodel import CMSPlugin
 from cms.plugin_pool import plugin_pool
+from cms.templatetags.cms_admin import admin_static_url
 from cms.utils import cms_static_url, get_cms_setting
 from cms.utils.permissions import has_plugin_permission
 from cms.plugins.utils import has_reached_plugin_limit
@@ -33,12 +34,14 @@ class PlaceholderAdmin(ModelAdmin):
                 'css/plugin_editor.css',
             )]
         }
-        js = [cms_static_url(path) for path in [
-            'js/plugins/admincompat.js',
-            'js/csrf.js',
-            'js/libs/jquery.query.js',
-            'js/libs/jquery.ui.core.js',
-            'js/libs/jquery.ui.dialog.js',
+        js = [
+            '{}js/jquery{}.js'.format(admin_static_url(), '' if settings.DEBUG else '.min'),
+            '{}js/jquery.init.js'.format(admin_static_url()),
+        ] + [cms_static_url(path) for path in [
+                'js/csrf.js',
+                'js/libs/jquery.query.js',
+                'js/libs/jquery.ui.core.js',
+                'js/libs/jquery.ui.dialog.js',
             ]
         ]
 

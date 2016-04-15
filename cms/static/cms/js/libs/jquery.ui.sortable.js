@@ -1016,4 +1016,4 @@ $.extend($.ui.sortable, {
 	}
 });
 
-})(jQuery);
+})(django.jQuery);

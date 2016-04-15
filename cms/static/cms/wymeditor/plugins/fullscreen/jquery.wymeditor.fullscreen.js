@@ -20,10 +20,10 @@
 //Extend WYMeditor
 WYMeditor.editor.prototype.fullscreen = function() {
     var wym = this,
-        $box = jQuery(this._box),
-        $iframe = jQuery(this._iframe),
+        $box = django.jQuery(this._box),
+        $iframe = django.jQuery(this._iframe),
         $overlay = null,
-        $window = jQuery(window),
+        $window = django.jQuery(window),
 
         editorMargin = 15;     // Margin from window (without padding)
 
@@ -71,7 +71,7 @@ WYMeditor.editor.prototype.fullscreen = function() {
             $iframe.data('wym-inline-css', $iframe.attr('style'));
 
             // Create overlay
-            $overlay = jQuery('<div id="wym-fullscreen-overlay"></div>')
+            $overlay = django.jQuery('<div id="wym-fullscreen-overlay"></div>')
                 .appendTo('body').css({
                     'position': 'fixed',
                     'background-color': 'rgb(0, 0, 0)',

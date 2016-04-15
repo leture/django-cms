@@ -18,4 +18,4 @@ $.bind = function(object, method){
 	}
 };
 	
-})(jQuery);
+})(django.jQuery);

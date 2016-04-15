@@ -12,10 +12,10 @@
  */
 
 // jQuery plugin
-jQuery.fn.tree = function (opts) {
+django.jQuery.fn.tree = function (opts) {
 	return this.each(function() {
-		if(tree_component.inst && tree_component.inst[jQuery(this).attr('id')]) 
-			tree_component.inst[jQuery(this).attr('id')].destroy();
+		if(tree_component.inst && tree_component.inst[django.jQuery(this).attr('id')]) 
+			tree_component.inst[django.jQuery(this).attr('id')].destroy();
 		if(opts !== false) {
 			var tmp = new tree_component();
 			tmp.init(this, opts);
@@ -38,9 +38,9 @@ function tree_component () {
 			var _this = tree_component.focusInst();
 			if(!_this) return;
 			
-			var tmp = jQuery(event.target);
+			var tmp = django.jQuery(event.target);
 			if(tree_component.drop.length && tmp.is("." + tree_component.drop.join(", .")) ) {
-				_this.drag = jQuery("<li id='dragged' class='dragged foreign " + event.target.className + "'><a href='#'>" + tmp.text() + "</a></li>");
+				_this.drag = django.jQuery("<li id='dragged' class='dragged foreign " + event.target.className + "'><a href='#'>" + tmp.text() + "</a></li>");
 				_this._drag = _this.drag;
 				_this.isdown	= true;
 				_this.foreign	= tmp;
@@ -59,11 +59,11 @@ function tree_component () {
 			// CLEAR TIMEOUT FOR OPENING HOVERED NODES WHILE DRAGGING
 			if(tree_component.to)	clearTimeout(tree_component.to);
 			if(tree_component.sto)	clearTimeout(tree_component.sto);
-			if(_this.foreign === false && _this.drag && _this.drag.parentNode && _this.drag.parentNode == jQuery(_this.container).children("ul:eq(0)").get(0)) {
-				jQuery(_this.drag).remove();
+			if(_this.foreign === false && _this.drag && _this.drag.parentNode && _this.drag.parentNode == django.jQuery(_this.container).children("ul:eq(0)").get(0)) {
+				django.jQuery(_this.drag).remove();
 				// CALL FUNCTION FOR COMPLETING MOVE
 				if(_this.moveType) {
-					var tmp = tree_component.inst[jQuery(_this.moveRef).parents(".tree:eq(0)").attr("id")];
+					var tmp = tree_component.inst[django.jQuery(_this.moveRef).parents(".tree:eq(0)").attr("id")];
 					if(tmp) { 
 						tmp.moved(_this.container.find("li.dragged"), _this.moveRef, _this.moveType, false, (_this.settings.rules.drag_copy == "on" || (_this.settings.rules.drag_copy == "ctrl" && event.ctrlKey) ) );
 					}
@@ -72,9 +72,9 @@ function tree_component () {
 				_this.moveRef = false;
 			}
 			if(_this.drag && _this.foreign !== false) {
-				jQuery(_this.drag).remove();
+				django.jQuery(_this.drag).remove();
 				if(_this.moveType) {
-					var tmp = tree_component.inst[jQuery(_this.moveRef).parents(".tree:eq(0)").attr("id")];
+					var tmp = tree_component.inst[django.jQuery(_this.moveRef).parents(".tree:eq(0)").attr("id")];
 					if(tmp) { 
 						tmp.settings.callback.ondrop.call(null, _this.foreign.get(0), _this.get_node( _this.moveRef).get(0), _this.moveType, _this);
 					}
@@ -84,7 +84,7 @@ function tree_component () {
 				_this.moveRef = false;
 			}
 			// RESET EVERYTHING
-			jQuery("#marker").hide();
+			django.jQuery("#marker").hide();
 			_this._drag		= false;
 			_this.drag		= false;
 			_this.isdown	= false;
@@ -104,26 +104,26 @@ function tree_component () {
 				if(tree_component.to) clearTimeout(tree_component.to);
 				if(!_this.appended) {
 					_this.container.children("ul:eq(0)").append(_this.drag);
-					var tmp = jQuery(_this.drag).offsetParent();
-					if(tmp.is("html")) tmp = jQuery("body");
+					var tmp = django.jQuery(_this.drag).offsetParent();
+					if(tmp.is("html")) tmp = django.jQuery("body");
 					_this.po = tmp.offset();
 					_this.appended = true;
 				}
-				jQuery(_this.drag).css({ "left" : (event.pageX - _this.po.left - (_this.settings.ui.rtl ? jQuery(_this.drag).width() : -5 ) ), "top" : (event.pageY - _this.po.top  + (jQuery.browser.opera ? _this.container.scrollTop() : 0) + 15) });
+				django.jQuery(_this.drag).css({ "left" : (event.pageX - _this.po.left - (_this.settings.ui.rtl ? django.jQuery(_this.drag).width() : -5 ) ), "top" : (event.pageY - _this.po.top  + (django.jQuery.browser.opera ? _this.container.scrollTop() : 0) + 15) });
 
 				if(event.target.tagName == "IMG" && event.target.id == "marker") return false;
 
-				var cnt = jQuery(event.target).parents(".tree:eq(0)");
+				var cnt = django.jQuery(event.target).parents(".tree:eq(0)");
 
 				// if not moving over a tree
 				if(cnt.size() == 0) {
 					if(tree_component.sto) clearTimeout(tree_component.sto);
-					if(jQuery(_this.drag).children("IMG").size() == 0) {
-						jQuery(_this.drag).append("<img class='removeicon' style='position:absolute; " + (_this.settings.ui.rtl ? "right" : "left" ) + ":4px; top:0px;' src='" + _this.settings.ui.theme_path + "default/remove.gif' />");
+					if(django.jQuery(_this.drag).children("IMG").size() == 0) {
+						django.jQuery(_this.drag).append("<img class='removeicon' style='position:absolute; " + (_this.settings.ui.rtl ? "right" : "left" ) + ":4px; top:0px;' src='" + _this.settings.ui.theme_path + "default/remove.gif' />");
 					}
 					_this.moveType = false;
 					_this.moveRef  = false;
-					jQuery("#marker").hide();
+					django.jQuery("#marker").hide();
 					return false;
 				}
 
@@ -131,12 +131,12 @@ function tree_component () {
 
 				// if moving over another tree and multitree is false
 				if( _this.foreign === false && cnt.get(0) != _this.container.get(0) && (!_this.settings.rules.multitree || !tree_component.inst[cnt.attr("id")].settings.rules.multitree) ) {
-					if(jQuery(_this.drag).children("IMG").size() == 0) {
-						jQuery(_this.drag).append("<img class='removeicon' style='position:absolute; " + (_this.settings.ui.rtl ? "right" : "left" ) + ":4px; top:0px;' src='" + _this.settings.ui.theme_path + "default/remove.gif' />");
+					if(django.jQuery(_this.drag).children("IMG").size() == 0) {
+						django.jQuery(_this.drag).append("<img class='removeicon' style='position:absolute; " + (_this.settings.ui.rtl ? "right" : "left" ) + ":4px; top:0px;' src='" + _this.settings.ui.theme_path + "default/remove.gif' />");
 					}
 					_this.moveType = false;
 					_this.moveRef  = false;
-					jQuery("#marker").hide();
+					django.jQuery("#marker").hide();
 					return false;
 				}
 
@@ -148,14 +148,14 @@ function tree_component () {
 				
 				if(event.target.tagName == "A" && event.target.className=="title") {
 					// just in case if hover is over the draggable
-					if(jQuery(event.target).is("#dragged")) return false;
+					if(django.jQuery(event.target).is("#dragged")) return false;
 
 					var goTo = { 
-						x : (jQuery(event.target).offset().left - 1),
+						x : (django.jQuery(event.target).offset().left - 1),
 						y : (event.pageY - tree_component.inst[cnt.attr("id")].offset.top)
 					}
 					if(cnt.hasClass("rtl")) {
-						goTo.x += jQuery(event.target).width() - 8;
+						goTo.x += django.jQuery(event.target).width() - 8;
 					}
 					if( (goTo.y + st)%_this.li_height < _this.li_height/3 + 1 ) {
 						mov = "before";
@@ -177,33 +177,33 @@ function tree_component () {
 						}
 					}
 
-					if(tree_component.inst[cnt.attr("id")].checkMove(_this.container.find("li.dragged"), jQuery(event.target), mov)) {
-						if(mov == "inside")	jQuery("#marker").attr("src", _this.settings.ui.theme_path + "default/plus.gif").width(14);
+					if(tree_component.inst[cnt.attr("id")].checkMove(_this.container.find("li.dragged"), django.jQuery(event.target), mov)) {
+						if(mov == "inside")	django.jQuery("#marker").attr("src", _this.settings.ui.theme_path + "default/plus.gif").width(14);
 						else {
-							if(cnt.hasClass("rtl"))	{ jQuery("#marker").attr("src", _this.settings.ui.theme_path + "default/marker_rtl.gif").width(40); }
-							else					{ jQuery("#marker").attr("src", _this.settings.ui.theme_path + "default/marker.gif").width(40); }
+							if(cnt.hasClass("rtl"))	{ django.jQuery("#marker").attr("src", _this.settings.ui.theme_path + "default/marker_rtl.gif").width(40); }
+							else					{ django.jQuery("#marker").attr("src", _this.settings.ui.theme_path + "default/marker.gif").width(40); }
 						}
 						_this.moveType	= mov;
 						_this.moveRef	= event.target;
-						jQuery(_this.drag).children("IMG").remove();
-						jQuery("#marker").css({ "left" : goTo.x-1 , "top" : goTo.y-2 }).show();
+						django.jQuery(_this.drag).children("IMG").remove();
+						django.jQuery("#marker").css({ "left" : goTo.x-1 , "top" : goTo.y-2 }).show();
 					}
 					else {
-						if(jQuery(_this.drag).children("IMG").size() == 0) {
-							jQuery(_this.drag).append("<img class='removeicon' style='position:absolute; " + (_this.settings.ui.rtl ? "right:0px;" : "left:4px;" ) + " top:0px;' src='" + _this.settings.ui.theme_path + "default/remove.gif' />");
+						if(django.jQuery(_this.drag).children("IMG").size() == 0) {
+							django.jQuery(_this.drag).append("<img class='removeicon' style='position:absolute; " + (_this.settings.ui.rtl ? "right:0px;" : "left:4px;" ) + " top:0px;' src='" + _this.settings.ui.theme_path + "default/remove.gif' />");
 						}
 						_this.moveType = false;
 						_this.moveRef = false;
-						jQuery("#marker").hide();
+						django.jQuery("#marker").hide();
 					}
 				}
 				else {
-					if(jQuery(_this.drag).children("IMG").size() == 0) {
-						jQuery(_this.drag).append("<img class='removeicon' style='position:absolute; " + (_this.settings.ui.rtl ? "right:0px;" : "left:4px;" ) + " top:0px;' src='" + _this.settings.ui.theme_path + "default/remove.gif' />");
+					if(django.jQuery(_this.drag).children("IMG").size() == 0) {
+						django.jQuery(_this.drag).append("<img class='removeicon' style='position:absolute; " + (_this.settings.ui.rtl ? "right:0px;" : "left:4px;" ) + " top:0px;' src='" + _this.settings.ui.theme_path + "default/remove.gif' />");
 					}
 					_this.moveType = false;
 					_this.moveRef = false;
-					jQuery("#marker").hide();
+					django.jQuery("#marker").hide();
 				}
 				event.preventDefault();
 				event.stopPropagation();
@@ -219,7 +219,7 @@ function tree_component () {
 				type	: "predefined",	// ENUM [json, xml_flat, xml_nested, predefined]
 				method	: "GET",		// HOW TO REQUEST FILES
 				async	: false,		// BOOL - async loading onopen
-				async_data : function (NODE) { return { id : jQuery(NODE).attr("id") || 0 } }, // PARAMETERS PASSED TO SERVER
+				async_data : function (NODE) { return { id : django.jQuery(NODE).attr("id") || 0 } }, // PARAMETERS PASSED TO SERVER
 				url		: false,		// FALSE or STRING - url to document to be used (async or not)
 				json	: false			// FALSE or OBJECT if type is JSON and async is false - the tree dump as json
 			},
@@ -314,7 +314,7 @@ function tree_component () {
 		// INITIALIZATION
 		init : function(elem, opts) {
 			var _this = this;
-			this.container		= jQuery(elem);
+			this.container		= django.jQuery(elem);
 			if(this.container.size == 0) { alert("Invalid container node!"); return }
 
 			tree_component.inst[this.cntr] = this;
@@ -324,36 +324,36 @@ function tree_component () {
 
 			// MERGE OPTIONS WITH DEFAULTS
 			if(opts && opts.cookies) {
-				this.settings.cookies = jQuery.extend({},this.settings.cookies,opts.cookies);
+				this.settings.cookies = django.jQuery.extend({},this.settings.cookies,opts.cookies);
 				delete opts.cookies;
 				if(!this.settings.cookies.opts) this.settings.cookies.opts = {};
 			}
 			if(opts && opts.callback) {
-				this.settings.callback = jQuery.extend({},this.settings.callback,opts.callback);
+				this.settings.callback = django.jQuery.extend({},this.settings.callback,opts.callback);
 				delete opts.callback;
 			}
 			if(opts && opts.data) {
-				this.settings.data = jQuery.extend({},this.settings.data,opts.data);
+				this.settings.data = django.jQuery.extend({},this.settings.data,opts.data);
 				delete opts.data;
 			}
 			if(opts && opts.ui) {
-				this.settings.ui = jQuery.extend({},this.settings.ui,opts.ui);
+				this.settings.ui = django.jQuery.extend({},this.settings.ui,opts.ui);
 				delete opts.ui;
 			}
 			if(opts && opts.rules) {
-				this.settings.rules = jQuery.extend({},this.settings.rules,opts.rules);
+				this.settings.rules = django.jQuery.extend({},this.settings.rules,opts.rules);
 				delete opts.rules;
 			}
 			if(opts && opts.lang) {
-				this.settings.lang = jQuery.extend({},this.settings.lang,opts.lang);
+				this.settings.lang = django.jQuery.extend({},this.settings.lang,opts.lang);
 				delete opts.lang;
 			}
-			this.settings		= jQuery.extend({},this.settings,opts);
+			this.settings		= django.jQuery.extend({},this.settings,opts);
 
 			// PATH TO IMAGES AND XSL
 			if(this.settings.path == false) {
 				this.path = "";
-				jQuery("script").each( function () { 
+				django.jQuery("script").each( function () { 
 					if(this.src.toString().match(/tree_component.*?js$/)) {
 						_this.path = this.src.toString().replace(/tree_component.*?js$/, "");
 					}
@@ -380,7 +380,7 @@ function tree_component () {
 			if(this.settings.rules.droppable.length) {
 				for(i in this.settings.rules.droppable) {
 					tree_component.drop.push(this.settings.rules.droppable[i]);
-					tree_component.drop = jQuery.unique(tree_component.drop);
+					tree_component.drop = django.jQuery.unique(tree_component.drop);
 				}
 			}
 
@@ -411,7 +411,7 @@ function tree_component () {
 					str += '<a rel="' + this.settings.ui.context[i].id + '" href="#" style="' + icn + '">' + this.settings.ui.context[i].label + '</a>';
 				}
 				str += '</div>';
-				this.context = jQuery(str);
+				this.context = django.jQuery(str);
 				this.context.hide();
 				this.context.append = false;
 			}
@@ -422,7 +422,7 @@ function tree_component () {
 			// CREATE DUMMY FOR MOVING
 			if(this.settings.rules.draggable != "none" && this.settings.rules.dragrules != "none") {
 				var _this = this;
-				jQuery("<img>")
+				django.jQuery("<img>")
 					.attr({
 						id		: "marker", 
 						src	: _this.settings.ui.theme_path + "default/marker.gif"
@@ -446,9 +446,9 @@ function tree_component () {
 				this.container.css({ position : "relative" });
 				this.offset = this.container.offset();
 				var tmp = 0;
-				tmp = parseInt(jQuery.curCSS(this.container.get(0), "paddingTop", true),10);
+				tmp = parseInt(django.jQuery.curCSS(this.container.get(0), "paddingTop", true),10);
 				if(tmp) this.offset.top += tmp;
-				tmp = parseInt(jQuery.curCSS(this.container.get(0), "borderTopWidth", true),10);
+				tmp = parseInt(django.jQuery.curCSS(this.container.get(0), "borderTopWidth", true),10);
 				if(tmp) this.offset.top += tmp;
 				this.container.css({ position : "" });
 			}
@@ -466,16 +466,16 @@ function tree_component () {
 
 			// SAVE OPENED
 			this.opened = Array();
-			if(this.settings.cookies && jQuery.cookie(this.settings.cookies.prefix + '_open')) {
-				var str = jQuery.cookie(this.settings.cookies.prefix + '_open');
+			if(this.settings.cookies && django.jQuery.cookie(this.settings.cookies.prefix + '_open')) {
+				var str = django.jQuery.cookie(this.settings.cookies.prefix + '_open');
 				var tmp = str.split(",");
-				jQuery.each(tmp, function () {
+				django.jQuery.each(tmp, function () {
 					_this.opened.push("#" + this.replace(/^#/,""));
 				});
 				this.settings.opened = false;
 			}
 			else if(this.settings.opened != false) {
-				jQuery.each(this.settings.opened, function (i, item) {
+				django.jQuery.each(this.settings.opened, function (i, item) {
 					_this.opened.push("#" + this.replace(/^#/,""));
 				});
 				this.settings.opened = false;
@@ -488,7 +488,7 @@ function tree_component () {
 			if(this.selected) {
 				this.settings.selected = Array();
 				if(this.selected_arr) {
-					jQuery.each(this.selected_arr, function () {
+					django.jQuery.each(this.selected_arr, function () {
 						_this.settings.selected.push("#" + this.attr("id"));
 					});
 				}
@@ -505,7 +505,7 @@ function tree_component () {
 			else if(this.settings.selected !== false) {
 				var tmp = Array();
 				if((typeof this.settings.selected).toLowerCase() == "object") {
-					jQuery.each(this.settings.selected, function () {
+					django.jQuery.each(this.settings.selected, function () {
 						tmp.push("#" + this.replace(/^#/,""));
 					});
 				}
@@ -546,7 +546,7 @@ function tree_component () {
 				}
 				else {
 					var _this = this;
-					jQuery.ajax({
+					django.jQuery.ajax({
 						type		: this.settings.data.method,
 						url			: this.settings.data.url, 
 						data		: this.settings.data.async_data(false), 
@@ -642,10 +642,10 @@ function tree_component () {
 		// getJSON from HTML
 		getJSON : function (nod, outer_attrib, inner_attrib, force) {
 			var _this = this;
-			if(!nod || jQuery(nod).size() == 0) {
+			if(!nod || django.jQuery(nod).size() == 0) {
 				nod = this.container.children("ul").children("li");
 			}
-			else nod = jQuery(nod);
+			else nod = django.jQuery(nod);
 
 			if(nod.size() > 1) {
 				var arr = [];
@@ -720,9 +720,9 @@ function tree_component () {
 		},
 		show_context : function (obj, x, y) {
 			var tmp = this.context.show().offsetParent();
-			if(tmp.is("html")) tmp = jQuery("body");
+			if(tmp.is("html")) tmp = django.jQuery("body");
 			tmp = tmp.offset();
-			this.context.css({ "left" : (x - tmp.left - (this.settings.ui.rtl ? jQuery(this.context).width() : -5 ) ), "top" : (y - tmp.top  + (jQuery.browser.opera ? this.container.scrollTop() : 0) + 15) });
+			this.context.css({ "left" : (x - tmp.left - (this.settings.ui.rtl ? django.jQuery(this.context).width() : -5 ) ), "top" : (y - tmp.top  + (django.jQuery.browser.opera ? this.container.scrollTop() : 0) + 15) });
 		},
 		hide_context : function () {
 			this.context.hide();
@@ -848,7 +848,7 @@ function tree_component () {
 									_this.isdown	= true;
 									_this.drag		= _this._drag.get(0).cloneNode(true);
 									_this.drag.id	= "dragged";
-									jQuery(_this.drag).children("a").html("Multiple selection").end().children("ul").remove();
+									django.jQuery(_this.drag).children("a").html("Multiple selection").end().children("ul").remove();
 								}
 							}
 							else {
@@ -866,13 +866,13 @@ function tree_component () {
 							event.stopPropagation();
 							return false;
 						});
-					jQuery(document)
+					django.jQuery(document)
 						.bind("mousedown",	tree_component.mousedown)
 						.bind("mouseup",	tree_component.mouseup)
 						.bind("mousemove",	tree_component.mousemove);
 				} 
 				// ENDIF OF DRAG & DROP FUNCTIONS
-			if(_this.context) jQuery(document).bind("mouseup", function() { _this.hide_context(); });
+			if(_this.context) django.jQuery(document).bind("mouseup", function() { _this.hide_context(); });
 		},
 		checkMove : function (NODES, REF_NODE, TYPE) {
 			if(this.locked) return this.error("LOCKED");
@@ -889,7 +889,7 @@ function tree_component () {
 					for(i in this.settings.rules.droppable) {
 						if(NODE.is("." + this.settings.rules.droppable[i])) {
 							if(this.settings.rules.metadata) {
-								jQuery.metadata.setType("attr", this.settings.rules.metadata);
+								django.jQuery.metadata.setType("attr", this.settings.rules.metadata);
 								NODE.attr(this.settings.rules.metadata, "type: '" + this.settings.rules.droppable[i] + "'");
 							}
 							else {
@@ -915,7 +915,7 @@ function tree_component () {
 						var ref = REF_NODE;
 						var mv = TYPE;
 					}
-					if(!_this.check.apply(_this,["dragrules", [jQuery(this), mv, ref]])) ok = false;
+					if(!_this.check.apply(_this,["dragrules", [django.jQuery(this), mv, ref]])) ok = false;
 				});
 				if(ok == false) return this.error("MOVE: AGAINST DRAG RULES");
 			}
@@ -931,7 +931,7 @@ function tree_component () {
 						var ok = true;
 						NODES.each(function (i) {
 							if(ok == false) return false;
-							if(jQuery.inArray(_this.get_type(this), tmp) == -1) ok = false;
+							if(django.jQuery.inArray(_this.get_type(this), tmp) == -1) ok = false;
 						});
 						if(ok == false) return this.error("MOVE: NOT A VALID CHILD");
 					}
@@ -943,7 +943,7 @@ function tree_component () {
 					var incr = 0;
 					NODES.each(function (i) {
 						var i = 1;
-						var t = jQuery(this);
+						var t = django.jQuery(this);
 						while(i < 100) {
 							t = t.children("ul:eq(0)");
 							if(t.size() == 0) break;
@@ -954,8 +954,8 @@ function tree_component () {
 					var ok = true;
 					nd.parents("li").each(function(i) {
 						if(ok == false) return false;
-						if(jQuery(this).metadata().max_depth) {
-							if( (i + incr) >= jQuery(this).metadata().max_depth) ok = false;
+						if(django.jQuery(this).metadata().max_depth) {
+							if( (i + incr) >= django.jQuery(this).metadata().max_depth) ok = false;
 						}
 					});
 					if(ok == false) return this.error("MOVE: MAX_DEPTH REACHED");
@@ -990,8 +990,8 @@ function tree_component () {
 			}
 			// RESELECT PREVIOUSLY SELECTED
 			if(this.settings.selected !== false) {
-				jQuery.each(this.settings.selected, function (i) {
-					_this.select_branch(jQuery(_this.settings.selected[i]), (_this.settings.rules.multiple !== false && i > 0) );
+				django.jQuery.each(this.settings.selected, function (i) {
+					_this.select_branch(django.jQuery(_this.settings.selected[i]), (_this.settings.rules.multiple !== false && i > 0) );
 				});
 				this.settings.selected = false;
 			}
@@ -999,7 +999,7 @@ function tree_component () {
 		},
 		// GET THE EXTENDED LI ELEMENT
 		get_node : function (obj) {
-			var obj = jQuery(obj);
+			var obj = django.jQuery(obj);
 			return obj.is("li") ? obj : obj.parents("li:eq(0)");
 		},
 		// GET THE TYPE OF THE NODE
@@ -1007,7 +1007,7 @@ function tree_component () {
 			obj = !obj ? this.selected : this.get_node(obj);
 			if(!obj) return;
 			if(this.settings.rules.metadata) {
-				jQuery.metadata.setType("attr", this.settings.rules.metadata);
+				django.jQuery.metadata.setType("attr", this.settings.rules.metadata);
 				var tmp = obj.metadata().type;
 				if(tmp) return tmp;
 			} 
@@ -1032,7 +1032,7 @@ function tree_component () {
 			if(cnt.scrollLeft() != sl || cnt.scrollTop() != st) {
 				_this.moveType = false;
 				_this.moveRef = false;
-				jQuery("#marker").hide();
+				django.jQuery("#marker").hide();
 			}
 			tree_component.sto = setTimeout( function() { _this.scrollCheck(x,y); }, 50);
 		},
@@ -1040,7 +1040,7 @@ function tree_component () {
 			if(this.locked) return this.error("LOCKED");
 			// CHECK LOCAL RULES IF METADATA
 			if(rule != "dragrules" && this.settings.rules.use_inline && this.settings.rules.metadata) {
-				jQuery.metadata.setType("attr", this.settings.rules.metadata);
+				django.jQuery.metadata.setType("attr", this.settings.rules.metadata);
 				if(typeof this.get_node(nodes).metadata()[rule] != "undefined") return this.get_node(nodes).metadata()[rule];
 			}
 			if(!this.settings.rules[rule])			return false;
@@ -1064,7 +1064,7 @@ function tree_component () {
 				return false;
 			}
 			else 
-				return (jQuery.inArray(this.get_type(nodes),this.settings.rules[rule]) != -1) ? true : false;
+				return (django.jQuery.inArray(this.get_type(nodes),this.settings.rules[rule]) != -1) ? true : false;
 		},
 		hover_branch : function (obj) {
 			if(this.locked) return this.error("LOCKED");
@@ -1147,7 +1147,7 @@ function tree_component () {
 			if(this.settings.rules.multiple != false && this.selected_arr.length > 1) {
 				this.selected_arr = [];
 				this.container.find("a.clicked").filter(":first-child").parent().each(function () {
-					_this.selected_arr.push(jQuery(this));
+					_this.selected_arr.push(django.jQuery(this));
 				});
 				if(obj.get(0) == this.selected.get(0)) {
 					this.selected = this.selected_arr[0];
@@ -1193,7 +1193,7 @@ function tree_component () {
 					});
 				}
 				else {
-					jQuery.ajax({
+					django.jQuery.ajax({
 						type		: this.settings.data.method,
 						url			: this.settings.data.url, 
 						data		: this.settings.data.async_data(obj), 
@@ -1222,11 +1222,11 @@ function tree_component () {
 				return true;
 			}
 			else {
-				if(parseInt(this.settings.ui.animation) > 0 && !disable_animation && !(jQuery.browser.msie && jQuery.browser.version < 7) ) {
+				if(parseInt(this.settings.ui.animation) > 0 && !disable_animation && !(django.jQuery.browser.msie && django.jQuery.browser.version < 7) ) {
 					obj.children("ul:eq(0)").css("display","none");
 					obj.removeClass("closed").addClass("open");
 					obj.children("ul:eq(0)").slideDown(parseInt(this.settings.ui.animation), function() {
-						jQuery(this).css("display","");
+						django.jQuery(this).css("display","");
 						if(callback) callback.call();
 					});
 				} else {
@@ -1242,11 +1242,11 @@ function tree_component () {
 			if(this.locked) return this.error("LOCKED");
 			var _this = this;
 			var obj = this.get_node(obj);
-			if(parseInt(this.settings.ui.animation) > 0 && !disable_animation && !(jQuery.browser.msie && jQuery.browser.version < 7) && obj.children("ul:eq(0)").size() == 1) {
+			if(parseInt(this.settings.ui.animation) > 0 && !disable_animation && !(django.jQuery.browser.msie && django.jQuery.browser.version < 7) && obj.children("ul:eq(0)").size() == 1) {
 				obj.children("ul:eq(0)").slideUp(parseInt(this.settings.ui.animation), function() {
 					obj.removeClass("open").addClass("closed");
 					_this.set_cookie("open");
-					jQuery(this).css("display","");
+					django.jQuery(this).css("display","");
 				});
 			} 
 			else {
@@ -1264,13 +1264,13 @@ function tree_component () {
 		open_all : function (obj) {
 			if(this.locked) return this.error("LOCKED");
 			var _this = this;
-			obj = obj ? jQuery(obj) : this.container;
+			obj = obj ? django.jQuery(obj) : this.container;
 			obj.find("li.closed").each( function () { var __this = this; _this.open_branch.apply(_this, [this, true, function() { _this.open_all.apply(_this, [__this]); } ]); });
 		},
 		close_all : function () {
 			if(this.locked) return this.error("LOCKED");
 			var _this = this;
-			jQuery(this.container).find("li.open").each( function () { _this.close_branch(this, true); });
+			django.jQuery(this.container).find("li.open").each( function () { _this.close_branch(this, true); });
 		},
 		show_lang : function (i) { 
 			if(this.locked) return this.error("LOCKED");
@@ -1286,7 +1286,7 @@ function tree_component () {
 		},
 		cycle_lang : function() {
 			if(this.locked) return this.error("LOCKED");
-			var i = jQuery.inArray(this.current_lang, this.settings.languages);
+			var i = django.jQuery.inArray(this.current_lang, this.settings.languages);
 			i ++;
 			if(i > this.settings.languages.length - 1) i = 0;
 			this.show_lang(i);
@@ -1300,17 +1300,17 @@ function tree_component () {
 
 			var t = type || this.get_type(obj) || "";
 			if(this.settings.rules.use_inline && this.settings.rules.metadata) {
-				jQuery.metadata.setType("attr", this.settings.rules.metadata);
+				django.jQuery.metadata.setType("attr", this.settings.rules.metadata);
 				if(typeof obj.metadata()["valid_children"] != "undefined") {
-					if(jQuery.inArray(t, obj.metadata()["valid_children"]) == -1) return this.error("CREATE: NODE NOT A VALID CHILD");
+					if(django.jQuery.inArray(t, obj.metadata()["valid_children"]) == -1) return this.error("CREATE: NODE NOT A VALID CHILD");
 				}
 				if(typeof obj.metadata()["max_children"] != "undefined") {
 					if( (obj.children("ul:eq(0)").children("li").size() + 1) > obj.metadata().max_children) return this.error("CREATE: MAX_CHILDREN REACHED");
 				}
 				var ok = true;
 				obj.parents("li").each(function(i) {
-					if(jQuery(this).metadata().max_depth) {
-						if( (i + 1) >= jQuery(this).metadata().max_depth) {
+					if(django.jQuery(this).metadata().max_depth) {
+						if( (i + 1) >= django.jQuery(this).metadata().max_depth) {
 							ok = false;
 						}
 					}
@@ -1322,11 +1322,11 @@ function tree_component () {
 				return this.open_branch(obj, true, function () { _this.create.apply(_this, [type, obj, data, icon, id]); } );
 			}
 
-			if(id)	$li = jQuery("<li id='" + id + "' />");
-			else	$li = jQuery("<li />");
+			if(id)	$li = django.jQuery("<li id='" + id + "' />");
+			else	$li = django.jQuery("<li />");
 			// NEW NODE IS OF PASSED TYPE OR PARENT'S TYPE
 			if(this.settings.rules.metadata) {
-				jQuery.metadata.setType("attr", this.settings.rules.metadata);
+				django.jQuery.metadata.setType("attr", this.settings.rules.metadata);
 				$li.attr(this.settings.rules.metadata, "type: '" + t + "'");
 			}
 			else {
@@ -1382,7 +1382,7 @@ function tree_component () {
 				if(this.current_lang)	obj = obj.find("a." + this.current_lang).get(0);
 				else					obj = obj.find("a:first").get(0);
 				last_value = obj.innerHTML;
-				_this.inp = jQuery("<input type='text' />");
+				_this.inp = django.jQuery("<input type='text' />");
 				_this.inp
 					.val(last_value)
 					.bind("mousedown",		function (event) { event.stopPropagation(); })
@@ -1395,15 +1395,15 @@ function tree_component () {
 						});
 				_this.inp.blur(function(event) {
 						if(this.value == "") this.value == last_value; 
-						jQuery(obj).html( jQuery(obj).parent().find("input").eq(0).attr("value") ).get(0).style.display = ""; 
-						jQuery(obj).prevAll("span").remove(); 
+						django.jQuery(obj).html( django.jQuery(obj).parent().find("input").eq(0).attr("value") ).get(0).style.display = ""; 
+						django.jQuery(obj).prevAll("span").remove(); 
 						if(this.value != last_value) _this.settings.callback.onrename.call(null, _this.get_node(obj).get(0), _this.current_lang, _this);
 						_this.inp = false;
 					});
-				var spn = jQuery("<span />").addClass(obj.className).append(_this.inp);
-				spn.attr("style", jQuery(obj).attr("style"));
+				var spn = django.jQuery("<span />").addClass(obj.className).append(_this.inp);
+				spn.attr("style", django.jQuery(obj).attr("style"));
 				obj.style.display = "none";
-				jQuery(obj).parent().prepend(spn);
+				django.jQuery(obj).parent().prepend(spn);
 				_this.inp.get(0).focus();
 				_this.inp.get(0).select();
 			}
@@ -1452,7 +1452,7 @@ function tree_component () {
 					var _this = this;
 					this.selected_arr = [];
 					this.container.find("a.clicked").filter(":first-child").parent().each(function () {
-						_this.selected_arr.push(jQuery(this));
+						_this.selected_arr.push(django.jQuery(this));
 					});
 					if(this.selected_arr.length > 0) {
 						this.selected = this.selected_arr[0];
@@ -1467,7 +1467,7 @@ function tree_component () {
 			var obj = this.hovered || this.selected;
 			if(obj) {
 				if(obj.hasClass("open"))						return force ? this.select_branch(obj.find("li:eq(0)")) : this.hover_branch(obj.find("li:eq(0)"));
-				else if(jQuery(obj).nextAll("li").size() > 0)	return force ? this.select_branch(obj.nextAll("li:eq(0)")) : this.hover_branch(obj.nextAll("li:eq(0)"));
+				else if(django.jQuery(obj).nextAll("li").size() > 0)	return force ? this.select_branch(obj.nextAll("li:eq(0)")) : this.hover_branch(obj.nextAll("li:eq(0)"));
 				else											return force ? this.select_branch(obj.parents("li").next("li").eq(0)) : this.hover_branch(obj.parents("li").next("li").eq(0));
 			}
 		},
@@ -1511,25 +1511,25 @@ function tree_component () {
 				/*case "selected":
 					if(this.settings.rules.multiple != false && this.selected_arr.length > 1) {
 						var val = Array();
-						jQuery.each(this.selected_arr, function () {
+						django.jQuery.each(this.selected_arr, function () {
 							val.push(this.attr("id"));
 						});
 						val = val.join(",");
 					}
 					else var val = this.selected ? this.selected.attr("id") : false;
-					jQuery.cookie(this.settings.cookies.prefix + '_selected',val,this.settings.cookies.opts);
+					django.jQuery.cookie(this.settings.cookies.prefix + '_selected',val,this.settings.cookies.opts);
 					break;*/
 				case "open":
 					var str = "";
 					this.container.find("li.open").each(function (i) { str += this.id + ","; });
-					jQuery.cookie(this.settings.cookies.prefix + '_open',str.replace(/,$/ig,""),this.settings.cookies.opts);
+					django.jQuery.cookie(this.settings.cookies.prefix + '_open',str.replace(/,$/ig,""),this.settings.cookies.opts);
 					break;
 			}
 		},
 		moved : function (what, where, how, is_new, is_copy) {
-			var what	= jQuery(what);
-			var $parent	= jQuery(what).parents("ul:eq(0)");
-			var $where	= jQuery(where);
+			var what	= django.jQuery(what);
+			var $parent	= django.jQuery(what).parents("ul:eq(0)");
+			var $where	= django.jQuery(where);
 			// IF MULTIPLE
 			if(what.size() > 1) {
 				var _this = this;
@@ -1544,10 +1544,10 @@ function tree_component () {
 				what = what.clone();
 				what.each(function (i) {
 					this.id = this.id + "_copy";
-					jQuery(this).find("li").each(function () {
+					django.jQuery(this).find("li").each(function () {
 						this.id = this.id + "_copy";
 					})
-					jQuery(this).find("a.clicked").removeClass("clicked");
+					django.jQuery(this).find("a.clicked").removeClass("clicked");
 				});
 			}
 			if(is_new) {
@@ -1558,7 +1558,7 @@ function tree_component () {
 			}
 			
 			if(!is_new) {
-				var tmp = jQuery(what).parents(".tree:eq(0)");
+				var tmp = django.jQuery(what).parents(".tree:eq(0)");
 				// if different trees
 				if(tmp.get(0) != this.container.get(0)) {
 					tmp = tree_component.inst[tmp.attr("id")];
@@ -1680,14 +1680,14 @@ function tree_component () {
 			if(!str) return;
 			if(this.settings.data.async) {
 				if(!this.srch_opn) {
-					var dd = jQuery.extend( { "search" : str } , this.settings.data.async_data(false) );
-					jQuery.ajax({
+					var dd = django.jQuery.extend( { "search" : str } , this.settings.data.async_data(false) );
+					django.jQuery.ajax({
 						type		: this.settings.data.method,
 						url			: this.settings.data.url, 
 						data		: dd, 
 						dataType	: "text",
 						success		: function (data) {
-							_this.srch_opn = jQuery.unique(data.split(","));
+							_this.srch_opn = django.jQuery.unique(data.split(","));
 							_this.search.apply(_this,[str]);
 						} 
 					});
@@ -1731,7 +1731,7 @@ function tree_component () {
 				for(i in evts) {
 					var idxer = this.container.indexer(evts[i]);
 					idxer.stop();
-					jQuery.removeData( idxer.listener, idxer.event + '.indexer' );
+					django.jQuery.removeData( idxer.listener, idxer.event + '.indexer' );
 				}
 			} catch(err) { }
 			this.container.unbind();

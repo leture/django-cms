@@ -23,7 +23,7 @@ WYMeditor.editor.prototype.rdfa = function(options) {
 
 //RDFa constructor
 WYMeditor.RDFa = function(options, wym) {
-    options = jQuery.extend({
+    options = django.jQuery.extend({
         setStdNameSpaces: true,
         extendXHTMLParser: true,
         buttons: {}
@@ -52,7 +52,7 @@ WYMeditor.RDFa.prototype.setStdNameSpaces = function() {
 };
 
 WYMeditor.RDFa.prototype.addNameSpace = function(attr, value) {
-    jQuery('html', this._wym._doc)
+    django.jQuery('html', this._wym._doc)
         .attr(attr, value);
 };
 
@@ -94,7 +94,7 @@ WYMeditor.RDFa.prototype.setStdVocabularies = function() {
         'xmlns:xhv',
         'xmlns:xsd'
     ];
-    jQuery.each(vocabularies, function(index, vocabulary) {
+    django.jQuery.each(vocabularies, function(index, vocabulary) {
         _this.addVocabulary(vocabulary);
     });
 };
@@ -122,8 +122,8 @@ WYMeditor.RDFa.prototype.extendLinkAttributes = function() {
 
 WYMeditor.RDFa.prototype.setButtons = function() {
     var _this = this;
-    var list = jQuery(this._wym._box).find('div.wym_classes ul');
-    jQuery.each(this._options.buttons, function(index, button) {
+    var list = django.jQuery(this._wym._box).find('div.wym_classes ul');
+    django.jQuery.each(this._options.buttons, function(index, button) {
         list
             .append('<li></li>')
             .children(':last')
@@ -146,13 +146,13 @@ WYMeditor.RDFa.prototype.clickButtonHandler = function(evt) {
         selected  = wym.selected();
 
     //the attribute already exists, remove it
-    if (typeof(jQuery(selected).attr(evt.data.attr)) !== 'undefined' &&
-            jQuery(selected).attr(evt.data.attr) != '') {
+    if (typeof(django.jQuery(selected).attr(evt.data.attr)) !== 'undefined' &&
+            django.jQuery(selected).attr(evt.data.attr) != '') {
         WYMeditor.console.log(
             'attribute already exists, remove it:',
             evt.data.attr,
-            jQuery(selected).attr(evt.data.attr));
-        jQuery(selected)
+            django.jQuery(selected).attr(evt.data.attr));
+        django.jQuery(selected)
             .removeAttr(evt.data.attr)
             .removeClass(evt.data.ns)
             .removeClass(evt.data.attr)
@@ -162,7 +162,7 @@ WYMeditor.RDFa.prototype.clickButtonHandler = function(evt) {
     } else {
         WYMeditor.console.log('attribute does not exist, add it:', evt.data.attr, evt.data.value);
         if (evt.data.value) { //value available
-            jQuery(selected)
+            django.jQuery(selected)
                 .attr(evt.data.attr, evt.data.ns + ':' + evt.data.value)
                 .addClass(evt.data.ns)
                 .addClass(evt.data.attr)
@@ -170,7 +170,7 @@ WYMeditor.RDFa.prototype.clickButtonHandler = function(evt) {
         } else { //value not available
             evt.data.value = prompt('Value', '');
             if (evt.data.value !== null) {
-                jQuery(selected)
+                django.jQuery(selected)
                     .attr(evt.data.attr, evt.data.value)
                     .addClass(evt.data.ns)
                     .addClass(evt.data.attr)

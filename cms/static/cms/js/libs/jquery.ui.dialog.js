@@ -647,4 +647,4 @@ $.extend($.ui.dialog.overlay.prototype, {
 	}
 });
 
-})(jQuery);
+})(django.jQuery);

@@ -12,9 +12,9 @@ WYMeditor.editor.prototype.hovertools = function() {
     wym.status('&nbsp;');
 
     // Bind events on buttons
-    jQuery(this._box).find(this._options.toolSelector).hover(
+    django.jQuery(this._box).find(this._options.toolSelector).hover(
         function() {
-            wym.status(jQuery(this).html());
+            wym.status(django.jQuery(this).html());
         },
         function() {
             wym.status('&nbsp;');
@@ -23,26 +23,26 @@ WYMeditor.editor.prototype.hovertools = function() {
 
     // Classes: add/remove a style attr to matching elems
     // while mouseover/mouseout
-    jQuery(this._box).find(this._options.classSelector).hover(
+    django.jQuery(this._box).find(this._options.classSelector).hover(
         function() {
             var aClasses = eval(wym._options.classesItems);
-            var sName = jQuery(this).attr(WYMeditor.NAME);
+            var sName = django.jQuery(this).attr(WYMeditor.NAME);
             var oClass = WYMeditor.Helper.findByName(aClasses, sName);
 
             if (oClass){
                 jqexpr = oClass.expr;
                 // Don't use jQuery.find() on the iframe body
                 // because of MSIE + jQuery + expando issue (#JQ1143)
-                if (!jQuery.browser.msie) {
-                    jQuery(wym._doc).find(jqexpr).css('background-color','#cfc');
+                if (!django.jQuery.browser.msie) {
+                    django.jQuery(wym._doc).find(jqexpr).css('background-color','#cfc');
                 }
             }
         },
         function() {
             // Don't use jQuery.find() on the iframe body
             // because of MSIE + jQuery + expando issue (#JQ1143)
-            if (!jQuery.browser.msie) {
-                jQuery(wym._doc).find('*').removeAttr('style');
+            if (!django.jQuery.browser.msie) {
+                django.jQuery(wym._doc).find('*').removeAttr('style');
             }
         }
     );

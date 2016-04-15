@@ -118,4 +118,4 @@ Usage:
 	};
     jQuery.hotkeys = this;
     return jQuery;    
-})(jQuery);
+})(django.jQuery);

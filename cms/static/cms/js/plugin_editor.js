@@ -172,4 +172,4 @@
 	removed_cancelled_plugin = function(plugin_id) {
 		$('#plugin_'+plugin_id).remove();
 	};
-})(jQuery);
+})(django.jQuery);

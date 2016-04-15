@@ -17,7 +17,7 @@
  * @class
  */
 function TableEditor(options, wym) {
-    options = jQuery.extend({
+    options = django.jQuery.extend({
         sMergeRowButtonHtml: String() +
             '<li class="wym_tools_merge_row">' +
                 '<a name="merge_row" href="#" title="Merge Cells" ' +

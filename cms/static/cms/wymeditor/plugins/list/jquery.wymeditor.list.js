@@ -9,7 +9,7 @@
  */
 
 function ListPlugin(options, wym) {
-    this._options = jQuery.extend({}, options);
+    this._options = django.jQuery.extend({}, options);
     this._wym = wym;
 
     this.init();

@@ -87,4 +87,4 @@ settings.csrfTokenSet = true;
 }
 });
 };
-})(jQuery);
+})(django.jQuery);
