@@ -313,6 +313,109 @@ class PageAdmin(ModelAdmin):
         else:
             return HttpResponseForbidden(_("You have no permission to change the template"))
 
+    def _is_versioned(self, request):
+        """Check if a request is versioned.
+
+        Checks if the current admin request is one for
+        a model's history or recovery (provided by package
+        django-reversion). Returns a boolean.
+
+        Note: Assumes certain patterns about the request
+              path (see note in get_version_id for more
+              details).
+
+        """
+        return self._is_history(request) or self._is_recovery(request)
+
+    def _is_history(self, request):
+        """Check if a request is for history.
+
+        Checks if the current request is for an admin history
+        lookup. Returns a boolean.
+
+        Note: Assumes certain patterns about the request
+              path (see note in get_version_id for more
+              details).
+
+        """
+        return "history" in request.path
+
+    def _is_recovery(self, request):
+        """Check if a request is for versioned recovery.
+
+        Checks if the current request is for a recovery
+        that is controlled by the package django-reversion.
+        Returns a boolean.
+
+        Note: Assumes certain patterns about the request
+              path (see note in get_version_id for more
+              details).
+
+        """
+        return "recover" in request.path
+
+    def _get_revisioned_items(self, version_id):
+        """Get revisioned items for a version_id.
+
+        Given a version_id, will return a list of
+        revisioned objects for the specified version_id.
+
+        Returns list.
+        """
+        from reversion.models import Version
+
+        version = get_object_or_404(Version, pk=version_id)
+        revs = []
+        for related_version in version.revision.version_set.all():
+            try:
+                rev = related_version.object_version
+            except models.FieldDoesNotExist:
+                # in case the model has changed in the meantime
+                continue
+            else:
+                revs.append(rev)
+        return revs
+
+    def _get_versioned_placeholder(self, version_id, placeholder_name):
+        """Get revisioned Placeholder object instance.
+
+        Given a version_id and a placeholder_name,
+        will return a Placeholder object instance
+        matching the placeholder_name if one is found
+        in the specified version_id.
+
+        Returns Placeholder object instance, or None.
+        """
+        placeholder = None
+        revs = self._get_revisioned_items(version_id)
+        for rev in revs:
+            pobj = rev.object
+            if pobj.__class__ == Placeholder:
+                if pobj.slot == placeholder_name:
+                    placeholder = pobj
+                    break
+        return placeholder
+
+    def get_version_id(self, request):
+        """Gets a version_id if request is versioned.
+
+        Checks if the current request is for a history lookup
+        or recovery provided by the package django-reversion.
+        Returns an id if the request is a versioned request,
+        or None if not.
+
+        Note: Assumes certain patterns about the request
+              path that match those patterns provided by django
+              and the package django-reversion. Simply moved
+              this code here to make it more DRY, since its used
+              more than once, but may want to reduce the assumption
+              on the pattern check.
+        """
+        version_id = None
+        if self._is_versioned(request):
+            version_id = request.path.split("/")[-2]
+        return version_id
+
     def get_fieldsets(self, request, obj=None):
         """
         Add fieldsets of placeholders to the list of already existing
@@ -325,10 +428,20 @@ class PageAdmin(ModelAdmin):
                 fields.remove('published')
                 given_fieldsets[0][1]['fields'][2] = tuple(fields)
             placeholders_template = get_template_from_request(request, obj)
+            version_id = self.get_version_id(request)
             for placeholder_name in self.get_fieldset_placeholders(placeholders_template):
-                name = placeholder_utils.get_placeholder_conf("name", placeholder_name, obj.template, placeholder_name)
-                name = _(name)
-                given_fieldsets += [(title(name), {'fields':[placeholder_name], 'classes':['plugin-holder']})]
+                usable_placeholder = False
+                if version_id:
+                    placeholder = self._get_versioned_placeholder(version_id, placeholder_name)
+                    if placeholder:
+                        usable_placeholder = True
+                else:
+                    usable_placeholder = True
+                if usable_placeholder:
+                    name = placeholder_utils.get_placeholder_conf("name", placeholder_name, obj.template, placeholder_name)
+                    name = _(name)
+                    given_fieldsets += [(title(name), {'fields': [placeholder_name], 'classes': ['plugin-holder']})]
+
             advanced = given_fieldsets.pop(3)
             if obj.has_advanced_settings_permission(request):
                 given_fieldsets.append(advanced)
@@ -353,8 +466,9 @@ class PageAdmin(ModelAdmin):
 
         if obj:
             self.inlines = PAGE_ADMIN_INLINES
-            if not obj.has_publish_permission(request) and not 'published' in self.exclude:
-                self.exclude.append('published')
+            if not obj.has_publish_permission(request):
+                if not 'published' in self.exclude:
+                    self.exclude.append('published')
             elif 'published' in self.exclude:
                 self.exclude.remove('published')
 
@@ -362,30 +476,23 @@ class PageAdmin(ModelAdmin):
                 self.exclude.remove('soft_root')
 
             form = super(PageAdmin, self).get_form(request, obj, **kwargs)
-            version_id = None
-            versioned = False
-            if "history" in request.path or 'recover' in request.path:
-                versioned = True
-                version_id = request.path.split("/")[-2]
-        else:
-            self.inlines = []
-            form = PageAddForm
+            version_id = self.get_version_id(request)
 
-        if obj:
             try:
-                title_obj = obj.get_title_obj(language=language, fallback=False, version_id=version_id, force_reload=True)
+                title_obj = obj.get_title_obj(language=language, fallback=False, version_id=version_id,
+                                              force_reload=True)
             except titlemodels.Title.DoesNotExist:
                 title_obj = EmptyTitle()
             if form.base_fields['site'].initial is None:
                 form.base_fields['site'].initial = obj.site
             for name in ['slug',
-                         'title',
-                         'application_urls',
-                         'redirect',
-                         'meta_description',
-                         'meta_keywords',
-                         'menu_title',
-                         'page_title']:
+                'title',
+                'application_urls',
+                'redirect',
+                'meta_description',
+                'meta_keywords',
+                'menu_title',
+                'page_title']:
                 form.base_fields[name].initial = getattr(title_obj, name)
             if title_obj.overwrite_url:
                 form.base_fields['overwrite_url'].initial = title_obj.path
@@ -402,74 +509,67 @@ class PageAdmin(ModelAdmin):
                 plugin_list = []
                 show_copy = False
                 copy_languages = {}
-                if versioned:
-                    from reversion.models import Version
-                    version = get_object_or_404(Version, pk=version_id)
+                if version_id:
                     installed_plugins = plugin_pool.get_all_plugins()
                     plugin_list = []
                     actual_plugins = []
                     bases = {}
-                    revs = []
-                    for related_version in version.revision.version_set.all():
-                        try:
-                            rev = related_version.object_version
-                        except models.FieldDoesNotExist:
-                            # in case the model has changed in the meantime
-                            continue
-                        else:
-                            revs.append(rev)
-                    for rev in revs:
-                        pobj = rev.object
-                        if pobj.__class__ == Placeholder:
-                            if pobj.slot == placeholder_name:
-                                placeholder = pobj
-                                break
-                    for rev in revs:
-                        pobj = rev.object
-                        if pobj.__class__ == CMSPlugin:
-                            if pobj.language == language and pobj.placeholder_id == placeholder.id and not pobj.parent_id:
-                                if pobj.get_plugin_class() == CMSPlugin:
-                                    plugin_list.append(pobj)
-                                else:
-                                    bases[int(pobj.pk)] = pobj
-                        if hasattr(pobj, "cmsplugin_ptr_id"):
-                            actual_plugins.append(pobj)
-                    for plugin in actual_plugins:
-                        if int(plugin.cmsplugin_ptr_id) in bases:
-                            bases[int(plugin.cmsplugin_ptr_id)].placeholder = placeholder
-                            bases[int(plugin.cmsplugin_ptr_id)].set_base_attr(plugin)
-                            plugin_list.append(plugin)
+                    revs = self._get_revisioned_items(version_id)
+                    placeholder = self._get_versioned_placeholder(version_id, placeholder_name)
+                    if placeholder:
+                        for rev in revs:
+                            pobj = rev.object
+                            if pobj.__class__ == CMSPlugin:
+                                if pobj.language == language and pobj.placeholder_id == placeholder.id and not pobj.parent_id:
+                                    if pobj.get_plugin_class() == CMSPlugin:
+                                        plugin_list.append(pobj)
+                                    else:
+                                        bases[int(pobj.pk)] = pobj
+                            if hasattr(pobj, "cmsplugin_ptr_id"):
+                                actual_plugins.append(pobj)
+                        for plugin in actual_plugins:
+                            if int(plugin.cmsplugin_ptr_id) in bases:
+                                bases[int(plugin.cmsplugin_ptr_id)].placeholder = placeholder
+                                bases[int(plugin.cmsplugin_ptr_id)].set_base_attr(plugin)
+                                plugin_list.append(plugin)
                 else:
                     placeholder, created = obj.placeholders.get_or_create(slot=placeholder_name)
                     installed_plugins = plugin_pool.get_all_plugins(placeholder_name, obj)
-                    plugin_list = CMSPlugin.objects.filter(language=language, placeholder=placeholder, parent=None).order_by('position')
-                    other_plugins = CMSPlugin.objects.filter(placeholder=placeholder, parent=None).exclude(language=language)
+                    plugin_list = CMSPlugin.objects.filter(language=language, placeholder=placeholder,
+                                                           parent=None).order_by('position')
+                    other_plugins = CMSPlugin.objects.filter(placeholder=placeholder, parent=None).exclude(
+                        language=language)
                     dict_cms_languages = dict(settings.CMS_LANGUAGES)
                     for plugin in other_plugins:
                         if (not plugin.language in copy_languages) and (plugin.language in dict_cms_languages):
                             copy_languages[plugin.language] = dict_cms_languages[plugin.language]
 
-                language = get_language_from_request(request, obj)
-                if copy_languages and len(settings.CMS_LANGUAGES) > 1:
-                    show_copy = True
-                widget = PluginEditor(attrs={
-                    'installed': installed_plugins,
-                    'list': plugin_list,
-                    'copy_languages': copy_languages.items(),
-                    'show_copy': show_copy,
-                    'language': language,
-                    'placeholder': placeholder
-                })
-                form.base_fields[placeholder.slot] = CharField(widget=widget, required=False)
+                if placeholder:
+                    language = get_language_from_request(request, obj)
+                    if copy_languages and len(settings.CMS_LANGUAGES) > 1:
+                        show_copy = True
+                    widget = PluginEditor(attrs={
+                        'installed': installed_plugins,
+                        'list': plugin_list,
+                        'copy_languages': copy_languages.items(),
+                        'show_copy': show_copy,
+                        'language': language,
+                        'placeholder': placeholder
+                    })
+                    form.base_fields[placeholder.slot] = CharField(widget=widget, required=False)
+
+            if not obj.has_advanced_settings_permission(request):
+                for field in self.advanced_fields:
+                    del form.base_fields[field]
         else:
-            for name in ['slug','title']:
+            self.inlines = []
+            form = PageAddForm
+            for name in ['slug', 'title']:
                 form.base_fields[name].initial = u''
             form.base_fields['parent'].initial = request.GET.get('target', None)
             form.base_fields['site'].initial = request.session.get('cms_admin_site', None)
             form.base_fields['template'].initial = settings.CMS_TEMPLATES[0][0]
-        if obj and not obj.has_advanced_settings_permission(request):
-            for field in self.advanced_fields:
-                del form.base_fields[field]
+
         return form
 
     # remove permission inlines, if user isn't allowed to change them
