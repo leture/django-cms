@@ -739,12 +739,11 @@ class PageAdmin(ModelAdmin):
         user = request.user
         if user.is_superuser:
             return True
-        try:
-            perm = GlobalPagePermission.objects.get(user=user)
-            if perm.can_recover:
-                return True
-        except:
-            pass
+        if GlobalPagePermission.objects.filter(user_id=user.id, can_recover_page=True).exists():
+            return True
+        group_ids = list(user.groups.values_list('id', flat=True))
+        if GlobalPagePermission.objects.filter(group_id__in=group_ids, can_recover_page=True).exists():
+            return True
         return False
 
     def changelist_view(self, request, extra_context=None):
