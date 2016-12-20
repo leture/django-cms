@@ -25,16 +25,9 @@ class PageSelectWidget(MultiWidget):
             self.attrs = attrs.copy()
         else:
             self.attrs = {}
-        if site_choices is None or page_choices is None:
-            site_choices, page_choices = get_site_choices(), get_page_choices()
-        self.site_choices = site_choices
-        self.choices = page_choices
-        widgets = (Select(choices=site_choices ),
-                   Select(choices=[('', '----')]),
-                   Select(choices=self.choices, attrs={'style': "display:none;"} ),
-        )
-        super(PageSelectWidget, self).__init__(widgets, attrs)
-    
+        self.choices = []
+        super(PageSelectWidget, self).__init__((Select, Select, Select), attrs)
+
     def decompress(self, value):
         """
         receives a page_id in value and returns the site_id and page_id
@@ -46,11 +39,11 @@ class PageSelectWidget(MultiWidget):
             return [site.pk, page.pk, page.pk]
         site = Site.objects.get_current()
         return [site.pk,None,None]
-    
+
     def _has_changed(self, initial, data):
         # THIS IS A COPY OF django.forms.widgets.Widget._has_changed()
         # (except for the first if statement)
-        
+
         """
         Return True if data differs from initial.
         """
@@ -68,13 +61,23 @@ class PageSelectWidget(MultiWidget):
         if force_unicode(initial_value) != force_unicode(data_value):
             return True
         return False
-    
+
     def render(self, name, value, attrs=None):
         # THIS IS A COPY OF django.forms.widgets.MultiWidget.render()
         # (except for the last line)
-        
+
         # value is a list of values, each corresponding to a widget
         # in self.widgets.
+
+        site_choices = get_site_choices()
+        page_choices = get_page_choices()
+        self.site_choices = site_choices
+        self.choices = page_choices
+        self.widgets = (Select(choices=site_choices ),
+                   Select(choices=[('', '----')]),
+                   Select(choices=self.choices, attrs={'style': "display:none;"} ),
+        )
+
         if not isinstance(value, list):
             value = self.decompress(value)
         output = []
@@ -98,10 +101,12 @@ class PageSelectWidget(MultiWidget):
     };
     var handlePageChange = function(page_id) {
         if (page_id) {
-            $("#id_%(name)s_2 option").removeAttr('selected');
-            $("#id_%(name)s_2 option[value=" + page_id + "]").attr('selected','selected');
+            $("#id_%(name)s_2 option").attr('selected', false);
+            $("#id_%(name)s_2 option[value=" + page_id + "]").attr('selected', true);
         } else {
-            $("#id_%(name)s_2 option[value=]").attr('selected','selected');
+            if ($("#id_%(name)s_2").length) {
+                $("#id_%(name)s_2 option[value=]").attr('selected', true);
+            }
         };
     };
     $("#id_%(name)s_0").change(function(){
@@ -119,7 +124,7 @@ class PageSelectWidget(MultiWidget):
 })(django.jQuery);
 </script>''' % {'name': name})
         return mark_safe(self.format_output(output))
-    
+
     def format_output(self, rendered_widgets):
         return u' '.join(rendered_widgets)
     
