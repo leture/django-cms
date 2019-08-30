@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__version__ = '2.3.18'
+__version__ = '2.3.19'
 
 # patch settings 
 try:
